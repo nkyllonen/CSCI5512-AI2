@@ -1,46 +1,48 @@
-```
+'''
 CSCI 5512 - AI 2 - HW 2
 Nikki Kyllonen
 kyllo089
 
 Problem 3: Likelihood Weighting
-```
+'''
 
 class Node:
-    ```
-    name: string
-    value: boolean or None
-    parents: [string...]
-    cond_prob: {string: {string : float}...}
-    ```
+    '''
+    name:       string
+    value:      boolean or None
+    parents:    [string...]
+    cond_prob:  {string: {string : float}...}
+    '''
     def __init__(self, n, val, rents, probs):
         self.name = n
         self.value = val
         self.parents = rents
         self.cond_prob = probs
 
-    def __repr__(self):
+    # return string representation --> for print()
+    def __str__(self):
         if (self.value == True):
-            print(' +' , self.name , end='')
+            return ' +' + self.name
         elif (self.value == False):
-            print(' -' , self.name , end='')
+            return ' -' + self.name
         else:
-            print(self.name, end-'')
+            return self.name
 
 class Network:
-    ```
-    node_list: [Node]
-    ```
+    '''
+    node_list:  [Node...]
+    '''
     def __init__(self, nodes):
         self.node_list = nodes
 
-    def __repr__(self):
-        print('[', end='') #print without endline
+    def __str__(self):
+        out = '['
 
-        for n in node_list:
-            print(n)
+        for n in self.node_list:
+            out = out + str(n)
 
-        print(']', end='')
+        out = out + ']'
+        return out
 
 ### MAIN ###
 if __name__ == '__main__':
@@ -60,4 +62,8 @@ if __name__ == '__main__':
                 Node('J', None, ['G', 'H'], {'+g': {'+h': 0.2, '-h': 0.7},
                         '-g': {'+h': 0.9, '-h': 0.1}}),
                 Node('K', None, ['I'], {'+i': 0.3, '-i': 0.7})]
+
+    net = Network(nodes)
+
+    print(net)
 
