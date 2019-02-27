@@ -4,7 +4,14 @@ Nikki Kyllonen
 kyllo089
 
 Problem 3: Likelihood Weighting
+    (25 points)
+    Use likelihood weighting to estimate P(g|k,¬b,c). Use an
+    appropriate amount of samples, which will require you to
+    write code. Submit your your code as a supplement. You
+    have the options of Python (preferred), Matlab or Java.
 '''
+
+import copy
 
 class Node:
     '''
@@ -35,14 +42,37 @@ class Network:
     def __init__(self, nodes):
         self.node_list = nodes
 
+    # return string representation --> for print()
     def __str__(self):
         out = '['
 
         for n in self.node_list:
-            out = out + str(n)
+            out = out + str(n) + ' '
 
         out = out + ']'
         return out
+
+    def setNodeVal(self, name, val):
+        for n in self.node_list:
+            if (n.name == name):
+                n.value = val
+                return
+'''
+LH_weighting:
+    bnet:       Bayes Net without values
+    query:      query variables
+    evidence:   evidence variables and values {name: value...}
+'''
+def LH_weighting(bnet, query, evidence):
+    # set evidence values
+    for e, val in evidence.items():
+        bnet.setNodeVal(e, val)
+
+    print(bnet)
+
+    # keep copy of original state now that evidence values have been set
+    bnet_orig = copy.deepcopy(bnet)
+
 
 ### MAIN ###
 if __name__ == '__main__':
@@ -65,5 +95,9 @@ if __name__ == '__main__':
 
     net = Network(nodes)
 
-    print(net)
+    # sets for P(g | k, -b, c)
+    query = 'G'
+    evidence = {'K': True, 'B': False, 'C': True}
+    N = 10
 
+    P = LH_weighting(net, query, evidence)
