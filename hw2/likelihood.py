@@ -11,7 +11,7 @@ Problem 3: Likelihood Weighting
     have the options of Python (preferred), Matlab or Java.
 '''
 
-import copy
+import copy, random
 
 class Node:
     '''
@@ -57,24 +57,74 @@ class Network:
             if (n.name == name):
                 n.value = val
                 return
+
+    # calculate conditional probability : P(X | Parents(X))
+    def calcProb(self, name):
+        
+        return 0.0
+
+
 '''
 LH_weighting:
     bnet:       Bayes Net without values
     query:      query variables
     evidence:   evidence variables and values {name: value...}
 '''
-def LH_weighting(bnet, query, evidence):
+def LH_weighting(bnet, query, evidence, N):
     # set evidence values
     for e, val in evidence.items():
         bnet.setNodeVal(e, val)
 
-    print(bnet)
-
     # keep copy of original state now that evidence values have been set
     bnet_orig = copy.deepcopy(bnet)
 
+    # keep track of which nodes we've visited
+    visited = {}
+    # keep track of which node values we know
+    known = set(evidence.keys())
+    total = 0.0
+    y_sum = 0.0
+    num_nodes = len(bnet)
 
-### MAIN ###
+    for i in range(N):
+        # random ordering
+        #random.shuffle(bnet.node_list)
+        
+        weight = 1.0
+        
+        while (len(visited) < num_nodes):
+            # find node whose parents are known
+            i = random.randint(0, num_nodes-1)
+            
+            # while node_i's parents are NOT a subset of known
+            while (not set(bnet.node_list[i].parents).issubset(known)):
+                i = random.randint(0, num_nodes-1)
+
+            temp = bnet.node_list[i]
+            prob = bnet.calcProb(temp.name)
+
+            # if node is an evidence node -> update weight
+            if (temp.name in evidence.keys()):
+                weight *= prob
+            # else set value using random value
+            else:
+                v = random.random()
+                if (v < prob):
+                    temp.value = True
+                else:
+                    temp.value = False
+
+            # add to known and visited values
+            known.add(temp.name)
+            visited.add(temp.name)
+
+        # reset values
+        visited = {}
+
+
+'''
+========= MAIN =========
+'''
 if __name__ == '__main__':
     # array of Nodes for the Network
     nodes = [Node('A', None, [], {'+a':0.3}),
@@ -100,4 +150,4 @@ if __name__ == '__main__':
     evidence = {'K': True, 'B': False, 'C': True}
     N = 10
 
-    P = LH_weighting(net, query, evidence)
+    P = LH_weighting(net, query, evidence, N)
