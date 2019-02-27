@@ -78,10 +78,6 @@ def LH_weighting(bnet, query, evidence, N):
     # keep copy of original state now that evidence values have been set
     bnet_orig = copy.deepcopy(bnet)
 
-    # keep track of which nodes we've visited
-    visited = {}
-    # keep track of which node values we know
-    known = set(evidence.keys())
     total = 0.0
     y_sum = 0.0
     num_nodes = len(bnet)
@@ -90,6 +86,10 @@ def LH_weighting(bnet, query, evidence, N):
         # random ordering
         #random.shuffle(bnet.node_list)
         
+        # keep track of which nodes we've visited
+        visited = {}
+        # keep track of which node values we know
+        known = set(evidence.keys())
         weight = 1.0
         
         while (len(visited) < num_nodes):
