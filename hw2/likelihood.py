@@ -106,21 +106,21 @@ def LH_weighting(bnet, query, evidence, N):
         bnet.setNodeVal(e, val)
 
     # keep copy of original state now that evidence values have been set
-    bnet_orig = copy.deepcopy(bnet)
+    bnet_copy = copy.deepcopy(bnet)
 
     total = 0.0
     y_sum = 0.0
     num_nodes = len(bnet.node_list)
 
     for i in range(N):
-        # random ordering
-        #random.shuffle(bnet.node_list)
-        
         # keep track of which nodes we've visited
         visited = set()
         # keep track of which node values we know
         known = set(evidence.keys())
         weight = 1.0
+        matches_query = False
+        # make sure we're using the original net to start
+        bnet = copy.deepcopy(bnet_copy)
         
         while (len(visited) < num_nodes):
             # find node whose parents are known
@@ -147,10 +147,23 @@ def LH_weighting(bnet, query, evidence, N):
             # add to known and visited values
             known.add(temp.name)
             visited.add(temp.name)
+            # check if this node was our query node
+            temp_str = '+' + temp.name.lower()
+            if (temp.value == False):
+                temp_Str = temp_str.replace('+','-')
+            
+            if (temp_str == query):
+                matches_query = True
 
-        # reset values
-        visited = {}
+        # --- END WHILE --- #
+        total += weight
 
+        if (matches_query):
+            y_sum += weight
+
+    # --- END FOR ---#
+    # final value once finished looping
+    return y_sum / total
 
 '''
 ========= MAIN =========
@@ -180,4 +193,8 @@ if __name__ == '__main__':
     evidence = {'K': True, 'B': False, 'C': True}
     N = 10
 
-    P = LH_weighting(net, query, evidence, N)
+    P_pos = LH_weighting(net, '+' + query.lower(), evidence, N)
+    P_neg = LH_weighting(net, '-' + query.lower(), evidence, N)
+
+    # normalize results
+    P = (1.0/(P_pos + P_neg)) * P_pos
