@@ -52,16 +52,46 @@ class Network:
         out = out + ']'
         return out
 
-    def setNodeVal(self, name, val):
+    def getNode(self, name):
         for n in self.node_list:
             if (n.name == name):
-                n.value = val
-                return
+                return n
+
+    def setNodeVal(self, name, val):
+        n = getNode(name)
+        n.value = val
 
     # calculate conditional probability : P(X | Parents(X))
+    #   name:   name of node X
     def calcProb(self, name):
+        n = getNode(name)
+
+        # if this node has no parents
+        if (n.parents == []):
+            val = n.cond_prob['+' + name.lower()]
+            
+            if (n.value == False):
+                val = 1.0 - val    
+            
+            return val
+
+        dict_val = n.cond_prob
         
-        return 0.0
+        # loop until we find a value --> the probability we want!
+        #while (type(dict_val) != float):
+        for p in n.parents:
+            p_val = p.value
+            p_key = '+' + p.name.lower()
+
+            if (parent_val == False):
+                p_key = '-' + p.name.lower()
+            
+            dict_val = dict_val[p_key]
+
+        # negate if current node's value is negative
+        if (n.value == False):
+            dict_val = 1.0 - dict_val
+        return dict_val
 
 
 '''
