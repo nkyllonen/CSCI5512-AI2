@@ -58,13 +58,13 @@ class Network:
                 return n
 
     def setNodeVal(self, name, val):
-        n = getNode(name)
+        n = self.getNode(name)
         n.value = val
 
     # calculate conditional probability : P(X | Parents(X))
     #   name:   name of node X
     def calcProb(self, name):
-        n = getNode(name)
+        n = self.getNode(name)
 
         # if this node has no parents
         if (n.parents == []):
@@ -72,19 +72,19 @@ class Network:
             
             if (n.value == False):
                 val = 1.0 - val    
-            
             return val
 
         dict_val = n.cond_prob
         
-        # loop until we find a value --> the probability we want!
+        # loop through the parents, checking their values
         #while (type(dict_val) != float):
         for p in n.parents:
-            p_val = p.value
-            p_key = '+' + p.name.lower()
+            p_node = self.getNode(p)
+            p_val = p_node.value
+            p_key = '+' + p_node.name.lower()
 
-            if (parent_val == False):
-                p_key = '-' + p.name.lower()
+            if (p_val == False):
+                p_key = p_key.replace('+', '-')
             
             dict_val = dict_val[p_key]
 
@@ -110,14 +110,14 @@ def LH_weighting(bnet, query, evidence, N):
 
     total = 0.0
     y_sum = 0.0
-    num_nodes = len(bnet)
+    num_nodes = len(bnet.node_list)
 
     for i in range(N):
         # random ordering
         #random.shuffle(bnet.node_list)
         
         # keep track of which nodes we've visited
-        visited = {}
+        visited = set()
         # keep track of which node values we know
         known = set(evidence.keys())
         weight = 1.0
