@@ -187,6 +187,7 @@ if __name__ == '__main__':
                 Node('K', None, ['I'], {'+i': 0.3, '-i': 0.7})]
 
     net = Network(nodes)
+    net2 = copy.deepcopy(net)
 
     # sets for P(g | k, -b, c)
     query = 'G'
@@ -194,7 +195,11 @@ if __name__ == '__main__':
     N = 10
 
     P_pos = LH_weighting(net, '+' + query.lower(), evidence, N)
-    P_neg = LH_weighting(net, '-' + query.lower(), evidence, N)
+    P_neg = LH_weighting(net2, '-' + query.lower(), evidence, N)
 
     # normalize results
     P = (1.0/(P_pos + P_neg)) * P_pos
+
+    print("P_pos = " + str(P_pos))
+    print("P_neg = " + str(P_neg))
+    print("P = " + str(P))
