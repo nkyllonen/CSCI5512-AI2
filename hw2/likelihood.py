@@ -21,8 +21,9 @@ LH_weighting:
     evidence:   evidence variables and values {name: value...}
     N:          # iterations
     f:          file pointer
+    do_write:   bool indicating y/n file writing
 '''
-def LH_weighting(bnet, query, evidence, N, f):
+def LH_weighting(bnet, query, evidence, N, f, do_write):
     # set evidence values
     for e, val in evidence.items():
         bnet.setNodeVal(e, val)
@@ -99,7 +100,8 @@ def LH_weighting(bnet, query, evidence, N, f):
             y_sum_other += weight
         
 #        print(str(bnet) + " -- weight = " + str(weight))
-        f.write(str(bnet) + " -- weight = " + str(weight) + '\n')
+        if (do_write):
+            f.write(str(bnet) + " -- weight = " + str(weight) + '\n')
 
     # --- END FOR ---#
     # final value once finished looping
@@ -112,19 +114,26 @@ if __name__ == '__main__':
     # default values
     filename = "output.txt"
     N = 10
+    do_write = True
 
     # get command line input
     if (len(sys.argv) > 1):
         filename = str(sys.argv[1])
+
+        # check if we want to output to file or not
+        if (filename == "no-output"):
+            do_write = False
+
         if (len(sys.argv) == 3):
             N = int(sys.argv[2])
         elif (len(sys.argv) > 3):
             print('''ERROR: Invalid number of arguments.\\
-                    Expected pattern: python3 <pyfile> <filename> <OPT: N value>''')
+                    Expected pattern: python3 <pyfile> <filename> <OPT: N value>\\
+                    Expected pattern: python3 <pyfile> <OPT: 'no-output'> <OPT: N value>''')
             exit()
     
     # array of Nodes for the Network
-    '''nodes = [Node('A', None, [], {'+a':0.3}),
+    nodes = [Node('A', None, [], {'+a':0.3}),
                 Node('B', None, [], {'+b':0.6}),
                 Node('C', None, ['A'], {'+a': 0.2, '-a': 0.5}),
                 Node('D', None, ['A'], {'+a': 0.8, '-a': 0.4}),
@@ -139,24 +148,28 @@ if __name__ == '__main__':
                 Node('J', None, ['G', 'H'], {'+g': {'+h': 0.2, '-h': 0.7},
                         '-g': {'+h': 0.9, '-h': 0.1}}),
                 Node('K', None, ['I'], {'+i': 0.3, '-i': 0.7})]
-    '''
-    nodes = [Node('A', None, [], {'+a': 0.2}),
+    
+    '''nodes = [Node('A', None, [], {'+a': 0.2}),
             Node('B', None, ['A'], {'+a': 0.4, '-a': 0.01}),
             Node('C', None, ['A', 'B'], {'+a': {'+b': 1.0, '-b': 0.7},
                     '-a': {'+b': 0.3, '-b': 0.0}})]
-
+    '''
     net = Network(nodes)
     net2 = copy.deepcopy(net)
 
     # sets for P(g | k, -b, c)
-    '''query = 'G'
+    query = 'G'
     evidence = {'K': True, 'B': False, 'C': True}
-    N = 10'''
-    query = 'A'
-    evidence = {'B': True}
+    
+    # test network
+    '''query = 'A'
+    evidence = {'B': True}'''
 
-    f = open(filename, "w")
-    result_dict= LH_weighting(net, '+' + query.lower(), evidence, N, f)
+    f = None
+
+    if (do_write):
+        f = open(filename, "w")
+    result_dict= LH_weighting(net, '+' + query.lower(), evidence, N, f, do_write)
 
     P_pos = result_dict['match']
     P_neg = result_dict['other']
