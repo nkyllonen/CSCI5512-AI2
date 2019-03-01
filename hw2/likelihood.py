@@ -11,7 +11,7 @@ Problem 3: Likelihood Weighting
     have the options of Python (preferred), Matlab or Java.
 '''
 
-import copy, random
+import copy, random, sys
 from Network import Node, Network
 
 '''
@@ -19,8 +19,10 @@ LH_weighting:
     bnet:       Bayes Net without values
     query:      query variables
     evidence:   evidence variables and values {name: value...}
+    N:          # iterations
+    f:          file pointer
 '''
-def LH_weighting(bnet, query, evidence, N):
+def LH_weighting(bnet, query, evidence, N, f):
     # set evidence values
     for e, val in evidence.items():
         bnet.setNodeVal(e, val)
@@ -29,7 +31,8 @@ def LH_weighting(bnet, query, evidence, N):
     bnet_copy = copy.deepcopy(bnet)
 
     total = 0.0
-    y_sum = 0.0
+    y_sum_query = 0.0
+    y_sum_other = 0.0
     num_nodes = len(bnet.node_list)
 
     for i in range(N+1):
@@ -91,18 +94,35 @@ def LH_weighting(bnet, query, evidence, N):
         total += weight
 
         if (matches_query):
-            y_sum += weight
+            y_sum_query += weight
+        else:
+            y_sum_other += weight
         
-        print(str(bnet) + " -- weight = " + str(weight))
+#        print(str(bnet) + " -- weight = " + str(weight))
+        f.write(str(bnet) + " -- weight = " + str(weight) + '\n')
 
     # --- END FOR ---#
     # final value once finished looping
-    return y_sum / total
+    return {'match': y_sum_query / total, 'other': y_sum_other / total}
 
 '''
 ========= MAIN =========
 '''
 if __name__ == '__main__':
+    # default values
+    filename = "output.txt"
+    N = 10
+
+    # get command line input
+    if (len(sys.argv) > 1):
+        filename = str(sys.argv[1])
+        if (len(sys.argv) == 3):
+            N = int(sys.argv[2])
+        elif (len(sys.argv) > 3):
+            print('''ERROR: Invalid number of arguments.\\
+                    Expected pattern: python3 <pyfile> <filename> <OPT: N value>''')
+            exit()
+    
     # array of Nodes for the Network
     '''nodes = [Node('A', None, [], {'+a':0.3}),
                 Node('B', None, [], {'+b':0.6}),
@@ -134,10 +154,12 @@ if __name__ == '__main__':
     N = 10'''
     query = 'A'
     evidence = {'B': True}
-    N = 10
 
-    P_pos = LH_weighting(net, '+' + query.lower(), evidence, N)
-    P_neg = LH_weighting(net2, '-' + query.lower(), evidence, N)
+    f = open(filename, "w")
+    result_dict= LH_weighting(net, '+' + query.lower(), evidence, N, f)
+
+    P_pos = result_dict['match']
+    P_neg = result_dict['other']
 
     # normalize results
     P = (1.0/(P_pos + P_neg)) * P_pos
