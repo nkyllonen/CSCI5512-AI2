@@ -97,7 +97,7 @@ class Network:
 
         # loop through children
         for c in n.children:
-            prob *= self.calcProb(c.name)
+            prob *= self.calcProb(c)
 
         return prob
 
