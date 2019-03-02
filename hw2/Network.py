@@ -11,13 +11,15 @@ class Node:
     '''
     name:       string
     value:      boolean or None
-    parents:    [string...]
+    parents:    [string...]     # must be an array for cond_prob ordering
+    children:   [string...]
     cond_prob:  {string: {string : float}...}
     '''
-    def __init__(self, n, val, rents, probs):
+    def __init__(self, n, val, rents, kids, probs):
         self.name = n
         self.value = val
         self.parents = rents
+        self.children = kids
         self.cond_prob = probs
 
     # return string representation --> for print()
