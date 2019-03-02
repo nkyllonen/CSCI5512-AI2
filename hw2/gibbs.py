@@ -38,7 +38,7 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
     y_sum_other = 0.0
     num_nodes = len(bnet.node_list)
 
-    # randomly initialize entire network
+    # randomly initialize non-evidence nodes
     known = set(evidence.keys())
     for node in bnet.node_list:
         if (node.name not in known):
@@ -54,12 +54,12 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
         # randomly pick a non-evidence variable
         i = random.randint(0, num_nodes-1)
 
-        while (bnet.node_list[i].name not in known):
+        while (bnet.node_list[i].name in known):
             i = random.randint(0, num_nodes-1)
 
         # determine value of node i
         temp = bnet.node_list[i]
-        print("Picked node: " + str(temp))
+#        print("Picked node: " + str(temp))
         prob = bnet.calcBlanketProb(temp.name)
         v = random.random()
         temp_str = '+' + temp.name.lower()
@@ -77,7 +77,7 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
             y_sum_other += 1.0
 
         total += 1.0
-        print(bnet)
+#        print(bnet)
 
     return {'match': (y_sum_query / total), 'other': (y_sum_other / total)}
 
@@ -89,6 +89,15 @@ if __name__ == '__main__':
     filename = "output.txt"
     N = 10
     do_write = True
+
+    if (len(sys.argv) > 1):
+        N = int(sys.argv[1])
+
+        if (len(sys.argv) > 2):
+            print('''ERROR: Invalid number of arguments.\\
+                    Expected pattern: python3 <pyfile> <OPT: N value>''')
+            exit()
+            
 
     # array of Nodes for the Network
     nodes = [Node('A', None, [], {'C', 'D'}, {'+a':0.3}),
