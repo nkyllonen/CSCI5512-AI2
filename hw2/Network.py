@@ -88,3 +88,31 @@ class Network:
         if (n.value == False):
             dict_val = 1.0 - dict_val
         return dict_val
+    
+    # calculate unnormalized Markov Blanket probability
+    #   name:   name of node X
+    def calcUnnormalizedBlanket(self, name):
+        n = self.getNode(name)
+        prob = self.calcProb(name)
+
+        # loop through children
+        for c in n.children:
+            prob *= self.calcProb(c.name)
+
+        return prob
+
+    # calculate Markov Blanket probability :
+    # P(X | MarkovBlanket(X))
+    #   name:   name of node X
+    def calcBlanketProb(self, name):
+        n = self.getNode(name)
+
+        # calculate with positive X
+        n.value = True
+        p_pos = self.calcUnnormalizedBlanket(name)
+
+        n.value = False
+        p_neg = self.calcUnnormalizedBlanket(name)
+
+        # normalize --> return positive result
+        return (1.0 / (p_pos + p_neg)) * p_pos

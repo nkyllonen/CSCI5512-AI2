@@ -28,7 +28,8 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
     for e, val in evidence.items():
         bnet.setNodeVal(e, val)
 
-    # keep copy of original state now that evidence values have been set
+    # keep copy of original state now that evidence
+    # values have been set
     bnet_copy = copy.deepcopy(bnet)
 
     total = 0.0
