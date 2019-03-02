@@ -37,7 +37,7 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
     y_sum_other = 0.0
     num_nodes = len(bnet.node_list)
 
-    for i in range(N+1):
+    for i in range(N):
         # keep track of which nodes we've visited
         visited = set()
         # keep track of which node values we know
