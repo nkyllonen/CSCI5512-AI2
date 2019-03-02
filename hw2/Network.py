@@ -73,7 +73,6 @@ class Network:
         dict_val = n.cond_prob
         
         # loop through the parents, checking their values
-        #while (type(dict_val) != float):
         for p in n.parents:
             p_node = self.getNode(p)
             p_val = p_node.value

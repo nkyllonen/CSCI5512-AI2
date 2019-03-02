@@ -21,10 +21,8 @@ Gibbs_sampling:
     query:      query variables
     evidence:   evidence variables and values {name: value...}
     N:          # iterations
-    f:          file pointer
-    do_write:   bool indicating y/n file writing
 '''
-def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
+def Gibbs_sampling(bnet, query, evidence, N):
     # set evidence values
     for e, val in evidence.items():
         bnet.setNodeVal(e, val)
@@ -59,8 +57,9 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
 
         # determine value of node i
         temp = bnet.node_list[i]
-#        print("Picked node: " + str(temp))
+        print(bnet)
         prob = bnet.calcBlanketProb(temp.name)
+        print("Picked node: " + str(temp) + " prob = " + str(prob))
         v = random.random()
 
         if (v < prob):
@@ -79,12 +78,12 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
 
         if (match_query):
             y_sum_query += 1.0
-            print("---> match: ", end='')
+#            print("---> match: ", end='')
         else:
             y_sum_other += 1.0
 
         total += 1.0
-        print(bnet)
+        print("final: " + str(bnet) + '\n')
 
     return {'match': (y_sum_query / total), 'other': (y_sum_other / total)}
 
@@ -93,9 +92,7 @@ def Gibbs_sampling(bnet, query, evidence, N, f, do_write):
 '''
 if __name__ == '__main__':
     # default values
-    filename = "output.txt"
     N = 10
-    do_write = True
 
     if (len(sys.argv) > 1):
         N = int(sys.argv[1])
@@ -138,12 +135,14 @@ if __name__ == '__main__':
     evidence = {'K': True, 'B': False, 'C': True}
     '''    
     # test network for P(a, c, d | b)
-    query = {'A': True, 'C': True, 'D': True}
+    '''query = {'A': True, 'C': True, 'D': True}
     evidence = {'B': True}
+    '''
+    # test network for P(b, c | a, -d)
+    query = {'B': True, 'C': True}
+    evidence = {'A': True, 'D' : False}
 
-    f = None
-
-    result_dict = Gibbs_sampling(net, query, evidence, N, f, do_write)
+    result_dict = Gibbs_sampling(net, query, evidence, N)
     
     P_pos = result_dict['match']
     P_neg = result_dict['other']
