@@ -12,7 +12,7 @@ Problem 4: Gibbs Sampling
     options of Python (preferred), Matlab or Java.
 '''
 
-import copy, random, sys
+import copy, random, sys, json
 from Network import Node, Network
 
 '''
@@ -88,19 +88,56 @@ def Gibbs_sampling(bnet, query, evidence, N):
     return {'match': (y_sum_query / total), 'other': (y_sum_other / total)}
 
 '''
-========= MAIN =========
+==================== MAIN =====================
+Usage:
+    no args                     $python3 gibbs.py
+    input N value               $python3 gibbs.py <N value>
+    input query and evidence    $python3 gibbs.py <JSON query> <JSON evidence> <N value>
+
+Example usage:
+   $python3 gibbs.py '{"G" : true}' '{"K": true, "B": false, "C": true}' 10000
+
+Notes:
+* boolean values in JSON are lower case
+* entire dictionary must be wrapped in single quotes
+* dictionary keys must be wrapped in double quotes (JSON properties)
 '''
 if __name__ == '__main__':
     # default values
     N = 10
+    query = {}
+    evidence = {}
 
-    if (len(sys.argv) > 1):
+    if (len(sys.argv) == 2):
         N = int(sys.argv[1])
 
-        if (len(sys.argv) > 2):
+        # DEFAULT QUERIES + EVIDENCES
+        # sets for P(g | k, -b, c)
+        query = {'G': True}
+        evidence = {'K': True, 'B': False, 'C': True}
+        
+        # test network for P(a, c, d | b)
+        '''query = {'A': True, 'C': True, 'D': True}
+        evidence = {'B': True}
+        '''
+        # test network for P(b, c | a, -d)
+        '''query = {'B': True, 'C': True}
+        evidence = {'A': True, 'D' : False}
+        '''
+
+    if (len(sys.argv) > 2):
+        if (len(sys.argv) > 4):
             print('''ERROR: Invalid number of arguments.\\
-                    Expected pattern: python3 <pyfile> <OPT: N value>''')
+                    Expected pattern:\\
+                    python3 <pyfile> <JSON query> <JSON evidence> <N value>''')
             exit()
+        else:
+            query = json.loads(sys.argv[1])
+            evidence = json.loads(sys.argv[2])
+            N = int(sys.argv[3])
+    
+    print("query: " + str(query))
+    print("evidence: " + str(evidence))
             
     # array of Nodes for the Network
     nodes = [Node('A', None, [], {'C', 'D'}, {'+a':0.3}),
@@ -131,19 +168,6 @@ if __name__ == '__main__':
     '''
     net = Network(nodes)
 
-    # sets for P(g | k, -b, c)
-    
-    query = {'G': True}
-    evidence = {'K': True, 'B': False, 'C': True}
-        
-    # test network for P(a, c, d | b)
-    '''query = {'A': True, 'C': True, 'D': True}
-    evidence = {'B': True}
-    '''
-    # test network for P(b, c | a, -d)
-    '''query = {'B': True, 'C': True}
-    evidence = {'A': True, 'D' : False}
-    '''
     result_dict = Gibbs_sampling(net, query, evidence, N)
     
     P_pos = result_dict['match']
