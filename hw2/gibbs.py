@@ -57,10 +57,10 @@ def Gibbs_sampling(bnet, query, evidence, N):
 
         # determine value of node i
         temp = bnet.node_list[i]
-        print(bnet)
+#        print(bnet)
         prob = bnet.calcBlanketProb(temp.name)
-        print("Picked node: " + str(temp) + " prob = " + str(prob))
         v = random.random()
+#        print("Picked node: " + str(temp) + " prob = " + str(prob) + " v = " + str(v))
 
         if (v < prob):
             temp.value = True
@@ -83,7 +83,7 @@ def Gibbs_sampling(bnet, query, evidence, N):
             y_sum_other += 1.0
 
         total += 1.0
-        print("final: " + str(bnet) + '\n')
+#        print("final: " + str(bnet) + '\n')
 
     return {'match': (y_sum_query / total), 'other': (y_sum_other / total)}
 
@@ -103,7 +103,6 @@ if __name__ == '__main__':
             exit()
             
     # array of Nodes for the Network
-    '''
     nodes = [Node('A', None, [], {'C', 'D'}, {'+a':0.3}),
                 Node('B', None, [], {'E'}, {'+b':0.6}),
                 Node('C', None, ['A'], {'G'}, {'+a': 0.2, '-a': 0.5}),
@@ -112,12 +111,15 @@ if __name__ == '__main__':
                 Node('F', None, [], {'I'}, {'+f': 0.5}),
                 Node('G', None, ['C', 'D', 'E'], {'I', 'J'},
                         {'+c': {'+d': {'+e': 0.1, '-e': 0.2},
-                        '-d': {'+e': 0.3, '-e': 0.4}}, '-c': {'+d': {'+e': 0.5, '-e': 0.6},
+                        '-d': {'+e': 0.3, '-e': 0.4}},
+                        '-c': {'+d': {'+e': 0.5, '-e': 0.6},
                         '-d': {'+e': 0.7, '-e': 0.8}}}),
                 Node('H', None, ['E'], {'J'}, {'+e': 0.4, '-e': 0.7}),
-                Node('I', None, ['F', 'G'], {'K'}, {'+f': {'+g': 0.8, '-g': 0.6}, 
+                Node('I', None, ['F', 'G'], {'K'},
+                        {'+f': {'+g': 0.8, '-g': 0.6}, 
                         '-f': {'+g': 0.4, '-g': 0.2}}),
-                Node('J', None, ['G', 'H'], set(), {'+g': {'+h': 0.2, '-h': 0.7},
+                Node('J', None, ['G', 'H'], set(),
+                        {'+g': {'+h': 0.2, '-h': 0.7},
                         '-g': {'+h': 0.9, '-h': 0.1}}),
                 Node('K', None, ['I'], set(), {'+i': 0.3, '-i': 0.7})]
     '''
@@ -126,22 +128,22 @@ if __name__ == '__main__':
             Node('C', None, ['B'], {'D'}, {'+b': 0.4, '-b': 0.5}),
             Node('D', None, ['B', 'C'], set(), {'+b': {'+c': 0.25, '-c': 1.0},
                     '-b': {'+c': 0.15, '-c': 0.05}})]
-    
+    '''
     net = Network(nodes)
 
     # sets for P(g | k, -b, c)
-    '''
-    query = 'G'
+    
+    query = {'G': True}
     evidence = {'K': True, 'B': False, 'C': True}
-    '''    
+        
     # test network for P(a, c, d | b)
     '''query = {'A': True, 'C': True, 'D': True}
     evidence = {'B': True}
     '''
     # test network for P(b, c | a, -d)
-    query = {'B': True, 'C': True}
+    '''query = {'B': True, 'C': True}
     evidence = {'A': True, 'D' : False}
-
+    '''
     result_dict = Gibbs_sampling(net, query, evidence, N)
     
     P_pos = result_dict['match']
