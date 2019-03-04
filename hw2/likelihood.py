@@ -55,18 +55,13 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
             while (not set(bnet.node_list[i].parents).issubset(known)):
                 i = random.randint(0, num_nodes-1)
 
-#            print("Known: " + str(known) + ' -- ', end='')
-#            print(str(bnet) + " -- weight = " + str(weight))
             temp = bnet.node_list[i]
-#            print("Picked node " + str(i) + " name: " + temp.name)
             
             # check to see if we've visited this node yet
             if (temp.name in visited):
-#                print("ALREADY VISITED " + temp.name)
                 continue
 
             prob = bnet.calcProb(temp.name)
-#            print("-->calcProb = " + str(prob))
 
             # if node is an evidence node -> update weight
             if (temp.name in evidence.keys()):
@@ -91,7 +86,6 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
             if (temp_str == query):
                 matches_query = True
 
-#        print("------- END WHILE -------")
         # --- END WHILE --- #
         total += weight
 
@@ -100,7 +94,6 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
         else:
             y_sum_other += weight
         
-#        print(str(bnet) + " -- weight = " + str(weight))
         if (do_write):
             f.write(str(bnet) + " -- weight = " + str(weight) + '\n')
 
@@ -113,24 +106,24 @@ def LH_weighting(bnet, query, evidence, N, f, do_write):
 '''
 if __name__ == '__main__':
     # default values
-    filename = "output.txt"
+    filename = None
     N = 10
-    do_write = True
+    do_write = False
 
     # get command line input
-    if (len(sys.argv) > 1):
+    if (len(sys.argv) == 2):
+        N = int(sys.argv[1])
+    elif (len(sys.argv) > 1):
         filename = str(sys.argv[1])
-
-        # check if we want to output to file or not
-        if (filename == "no-output"):
-            do_write = False
-
+        do_write = True
         if (len(sys.argv) == 3):
             N = int(sys.argv[2])
         elif (len(sys.argv) > 3):
-            print('''ERROR: Invalid number of arguments.\\
-                    Expected pattern: python3 <pyfile> <filename> <OPT: N value>\\
-                    Expected pattern: python3 <pyfile> <OPT: 'no-output'> <OPT: N value>''')
+            print('''ERROR: Invalid number of arguments.
+                    Expected pattern: python3 <pyfile>
+                    python3 <pyfile> <N value>
+                    python3 <pyfile> <filename> <N value>
+                    python3 <pyfile> <OPT: 'no-output'> <OPT: N value>''')
             exit()
     
     # array of Nodes for the Network
@@ -178,6 +171,9 @@ if __name__ == '__main__':
     # normalize results
     P = (1.0/(P_pos + P_neg)) * P_pos
 
+    print("query: " + str(query))
+    print("evidence: " + str(evidence))
+    
     print("P_pos = " + str(P_pos))
     print("P_neg = " + str(P_neg))
     print("P = " + str(P))

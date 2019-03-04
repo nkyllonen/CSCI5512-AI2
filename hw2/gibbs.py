@@ -57,10 +57,8 @@ def Gibbs_sampling(bnet, query, evidence, N):
 
         # determine value of node i
         temp = bnet.node_list[i]
-#        print(bnet)
         prob = bnet.calcBlanketProb(temp.name)
         v = random.random()
-#        print("Picked node: " + str(temp) + " prob = " + str(prob) + " v = " + str(v))
 
         if (v < prob):
             temp.value = True
@@ -78,12 +76,10 @@ def Gibbs_sampling(bnet, query, evidence, N):
 
         if (match_query):
             y_sum_query += 1.0
-#            print("---> match: ", end='')
         else:
             y_sum_other += 1.0
 
         total += 1.0
-#        print("final: " + str(bnet) + '\n')
 
     return {'match': (y_sum_query / total), 'other': (y_sum_other / total)}
 
@@ -105,30 +101,29 @@ Notes:
 if __name__ == '__main__':
     # default values
     N = 10
-    query = {}
-    evidence = {}
 
+    # DEFAULT QUERIES + EVIDENCES
+    # sets for P(g | k, -b, c)
+    query = {'G': True}
+    evidence = {'K': True, 'B': False, 'C': True}
+
+    # test network for P(a, c, d | b)
+    '''query = {'A': True, 'C': True, 'D': True}
+    evidence = {'B': True}
+    '''
+    # test network for P(b, c | a, -d)
+    '''query = {'B': True, 'C': True}
+    evidence = {'A': True, 'D' : False}
+    '''
+    
     if (len(sys.argv) == 2):
         N = int(sys.argv[1])
-
-        # DEFAULT QUERIES + EVIDENCES
-        # sets for P(g | k, -b, c)
-        query = {'G': True}
-        evidence = {'K': True, 'B': False, 'C': True}
-        
-        # test network for P(a, c, d | b)
-        '''query = {'A': True, 'C': True, 'D': True}
-        evidence = {'B': True}
-        '''
-        # test network for P(b, c | a, -d)
-        '''query = {'B': True, 'C': True}
-        evidence = {'A': True, 'D' : False}
-        '''
-
     if (len(sys.argv) > 2):
         if (len(sys.argv) > 4):
-            print('''ERROR: Invalid number of arguments.\\
-                    Expected pattern:\\
+            print('''ERROR: Invalid number of arguments.
+                    Expected patterns:
+                    python3 <pyfile>
+                    python3 <pyfile> <N value>
                     python3 <pyfile> <JSON query> <JSON evidence> <N value>''')
             exit()
         else:
