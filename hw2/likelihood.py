@@ -159,6 +159,10 @@ if __name__ == '__main__':
     '''query = 'A'
     evidence = {'B': True}'''
 
+    print("query: " + str(query))
+    print("evidence: " + str(evidence))
+    print("N: " + str(N))
+
     f = None
 
     if (do_write):
@@ -171,8 +175,6 @@ if __name__ == '__main__':
     # normalize results
     P = (1.0/(P_pos + P_neg)) * P_pos
 
-    print("query: " + str(query))
-    print("evidence: " + str(evidence))
     
     print("P_pos = " + str(P_pos))
     print("P_neg = " + str(P_neg))

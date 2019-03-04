@@ -46,8 +46,6 @@ def Gibbs_sampling(bnet, query, evidence, N):
             else:
                 node.value = False
 
-#    print(bnet)
-
     for i in range(N):
         # randomly pick a non-evidence variable
         i = random.randint(0, num_nodes-1)
@@ -133,6 +131,7 @@ if __name__ == '__main__':
     
     print("query: " + str(query))
     print("evidence: " + str(evidence))
+    print("N: " + str(N))
             
     # array of Nodes for the Network
     nodes = [Node('A', None, [], {'C', 'D'}, {'+a':0.3}),
