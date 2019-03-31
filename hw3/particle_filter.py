@@ -23,7 +23,7 @@ state:
     contains number of particles located
     at each possible state value
     
-    possible states: low, med, high
+    possible states: low, med, high water levels
 '''
 class State:
     def __init__(self, n, total):
@@ -40,7 +40,9 @@ class State:
 
 '''
 pt_filtering:
-
+    evidence(list):         e1...en values (booleans)
+    final_t(int):           t value for the final state
+    num_particles(int):     total particles in the system
 '''
 def pt_filtering(evidence, final_t, num_particles):
     # initialize probabilities in adj lists
@@ -87,15 +89,14 @@ def pt_filtering(evidence, final_t, num_particles):
         states[t] = State(t, num_particles)
         sample(num_particles, states[t], resample_probs)
     
-    #print (resample_probs)    
-
     # 3. output final state + probabilities
     print(states[final_t])
 
 '''
 sample:
-    updates current state values
-    using given transiion probabiliies
+    - distributes old_val number of particles
+    - updates current state values using
+        given transiion probabiliies
 '''
 def sample(old_val, cur_state, probs):
     for i in range(old_val):
