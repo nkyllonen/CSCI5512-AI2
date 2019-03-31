@@ -57,8 +57,8 @@ def pt_filtering(evidence, final_t, num_particles):
     # 1. sample to initialize State 0
     sample(num_particles, states[0], x0_probs)
     
-    print(states[0])
-'''
+    #print(states[0])
+
     # 2. loop through states until we reach the final state
     for t in range(1,final_t+1):
         # 2.1 sample to populate: state[t-1] --> state[t]
@@ -69,7 +69,22 @@ def pt_filtering(evidence, final_t, num_particles):
         sample(low_old, states[t], trans_probs['low'])
         sample(med_old, states[t], trans_probs['med'])
         sample(high_old, states[t], trans_probs['high'])
-'''
+
+        # 2.2 weight samples using observed evidence
+        low_w = states[t].low * obs_probs[evidence[t]]['low']
+        med_w = states[t].med * obs_probs[evidence[t]]['med']
+        high_w = states[t].high * obs_probs[evidence[t]]['high']
+
+        # 2.3 resample using total weight
+        total_w = low_w + med_w + high_w
+        resample_probs = {'low' : low_w / total_w,
+            'med' : med_w / total_w,
+            'high' : high_w / total_w}
+        sample(num_particles, states[t], resample_probs)
+
+    # 3. output final state
+    print(states[final_t])
+
 '''
 sample:
     updates current state values
@@ -96,7 +111,7 @@ if __name__ == '__main__':
     if (len(sys.argv) == 2):
         N = int(sys.argv[1])
 
-    # given observed evidence values
-    evidence = [False, False, True, True, False, False, False, False, True, False]
+    # given observed evidence values -- e0 doesn't exist
+    evidence = [None, False, False, True, True, False, False, False, False, True, False]
 
     pt_filtering(evidence, 10, N)
