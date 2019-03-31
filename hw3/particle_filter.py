@@ -16,7 +16,7 @@ Problem 4: Particle Weighting
     probability for the water table values.
 '''
 
-import random
+import random, sys
 
 '''
 state:
@@ -36,5 +36,34 @@ class State:
 pt_filtering:
 
 '''
-def pt_filtering():
+def pt_filtering(evidence, final_t, num_particles):
+    # initialize probabilities in adj lists
+    x0_probs = {'low' : 0.333, 'med' : 0.333, 'high' : 0.333}
+    trans_probs = {'low' : {'low' : 0.6, 'med' : 0.2, 'high' : 0},
+        'med' : {'low' : 0.35, 'med' : 0.6, 'high' : 0.5},
+        'high' : {'low' : 0.05, 'med' : 0.2, 'high' : 0.5}}
+    obs_probs = {True : {'low' : 0, 'med' : 0.05, 'high' : 0.4},
+        False : {'low' :  1.0, 'med' : 0.95, 'high' : 0.6}}
 
+    # gather list of States
+    states = []
+    for i in range(final_t):
+        states.append(State(i))
+
+    # 1. sample to initialize State 0
+
+'''
+========= MAIN =========
+'''
+if __name__ == '__main__':
+    # default
+    N = 100
+
+    # get command line input
+    if (len(sys.argv) == 2):
+        N = int(sys.argv[1])
+
+    # given observed evidence values
+    evidence = [False, False, True, True, False, False, False, False, True, False]
+
+    pt_filtering(evidence, 10, N)
