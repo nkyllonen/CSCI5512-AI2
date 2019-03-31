@@ -51,22 +51,39 @@ def pt_filtering(evidence, final_t, num_particles):
 
     # gather list of States
     states = []
-    for i in range(final_t):
+    for i in range(final_t+1):
         states.append(State(i))
 
     # 1. sample to initialize State 0
-    for i in range(num_particles):
-        r = random.random()
-        if (r < x0_probs['low']):
-            states[0].low = states[0].low + 1
-        elif (r < x0_probs['low'] + x0_probs['med']):
-            states[0].med = states[0].med + 1
-        else:
-            states[0].high = states[0].high + 1
+    sample(num_particles, states[0], x0_probs)
     
     print(states[0])
-
+'''
     # 2. loop through states until we reach the final state
+    for t in range(1,final_t+1):
+        # 2.1 sample to populate: state[t-1] --> state[t]
+        low_old = states[t-1].low
+        med_old = states[t-1].med
+        high_old = states[t-1].high
+        
+        sample(low_old, states[t], trans_probs['low'])
+        sample(med_old, states[t], trans_probs['med'])
+        sample(high_old, states[t], trans_probs['high'])
+'''
+'''
+sample:
+    updates current state values
+    using given transiion probabiliies
+'''
+def sample(old_val, cur_state, probs):
+    for i in range(old_val):
+        r = random.random()
+        if (r < probs['low']):
+            cur_state.low = cur_state.low + 1
+        elif (r < probs['low'] + probs['med']):
+            cur_state.med = cur_state.med + 1
+        else:
+            cur_state.high = cur_state.high + 1
 
 '''
 ========= MAIN =========
