@@ -28,9 +28,13 @@ state:
 class State:
     def __init__(self, n):
         self.id = n
-        self.low_N = 0
-        self.med_N = 0
-        self.high_N = 0
+        self.low = 0
+        self.med = 0
+        self.high = 0
+
+    def __str__(self):
+        return 'State {0}:\nlow = {1}\nmed = {2}\nhigh = {3}'.format(
+                self.id, self.low, self.med, self.high)
 
 '''
 pt_filtering:
@@ -51,6 +55,18 @@ def pt_filtering(evidence, final_t, num_particles):
         states.append(State(i))
 
     # 1. sample to initialize State 0
+    for i in range(num_particles):
+        r = random.random()
+        if (r < x0_probs['low']):
+            states[0].low = states[0].low + 1
+        elif (r < x0_probs['low'] + x0_probs['med']):
+            states[0].med = states[0].med + 1
+        else:
+            states[0].high = states[0].high + 1
+    
+    print(states[0])
+
+    # 2. loop through states until we reach the final state
 
 '''
 ========= MAIN =========
