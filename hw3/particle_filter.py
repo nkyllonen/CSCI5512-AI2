@@ -44,10 +44,10 @@ pt_filtering:
 '''
 def pt_filtering(evidence, final_t, num_particles):
     # initialize probabilities in adj lists
-    x0_probs = {'low' : 0.333, 'med' : 0.333, 'high' : 0.333}
-    trans_probs = {'low' : {'low' : 0.6, 'med' : 0.2, 'high' : 0},
-        'med' : {'low' : 0.35, 'med' : 0.6, 'high' : 0.5},
-        'high' : {'low' : 0.05, 'med' : 0.2, 'high' : 0.5}}
+    x0_probs = {'low' : 0.33333, 'med' : 0.33333, 'high' : 0.33333}
+    trans_probs = {'low' : {'low' : 0.6, 'med' : 0.35, 'high' : 0.05},
+        'med' : {'low' : 0.2, 'med' : 0.6, 'high' : 0.2},
+        'high' : {'low' : 0.0, 'med' : 0.5, 'high' : 0.5}}
     obs_probs = {True : {'low' : 0, 'med' : 0.05, 'high' : 0.4},
         False : {'low' :  1.0, 'med' : 0.95, 'high' : 0.6}}
 
