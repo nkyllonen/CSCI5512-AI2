@@ -26,15 +26,17 @@ state:
     possible states: low, med, high
 '''
 class State:
-    def __init__(self, n):
+    def __init__(self, n, total):
         self.id = n
         self.low = 0
         self.med = 0
         self.high = 0
+        self.total = total
 
     def __str__(self):
-        return 'State {0}:\nlow = {1}\nmed = {2}\nhigh = {3}'.format(
-                self.id, self.low, self.med, self.high)
+        return 'State {0}:\nlow = {1}, P(low) = {4}\nmed = {2}, P(med) = {5}\nhigh = {3}, P(high) = {6}'.format(
+                self.id, self.low, self.med, self.high,
+                self.low/self.total, self.med/self.total, self.high/self.total)
 
 '''
 pt_filtering:
@@ -52,7 +54,7 @@ def pt_filtering(evidence, final_t, num_particles):
     # gather list of States
     states = []
     for i in range(final_t+1):
-        states.append(State(i))
+        states.append(State(i, num_particles))
 
     # 1. sample to initialize State 0
     sample(num_particles, states[0], x0_probs)
@@ -80,9 +82,14 @@ def pt_filtering(evidence, final_t, num_particles):
         resample_probs = {'low' : low_w / total_w,
             'med' : med_w / total_w,
             'high' : high_w / total_w}
+   
+        # zero out current values
+        states[t] = State(t, num_particles)
         sample(num_particles, states[t], resample_probs)
+    
+    #print (resample_probs)    
 
-    # 3. output final state
+    # 3. output final state + probabilities
     print(states[final_t])
 
 '''
