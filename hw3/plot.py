@@ -45,3 +45,26 @@ def plot_normal(x_range, mu=0, sigma=1, cdf=False, **kwargs):
     else:
         y = ss.norm.pdf(x, mu, sigma)
     plt.plot(x, y, **kwargs)
+
+def plot6():
+    # F1 = N(0, 0.4)
+    x = np.linspace(-5, 5, 5000)
+    #plot_normal(x, 0, 0.4, color='red', lw=2, ls='-')
+    y1 = ss.norm.pdf(x, 0, 0.4)
+
+    # F2 = N(0,0.3684)
+    #plot_normal(x, 0, 0.3684, color='blue', lw=2, ls='-')
+    y2 = ss.norm.pdf(x, 0, 0.3684)
+    
+    plt.plot(x, y1, 'r-', x, y2, 'b-')
+    plt.legend(['P(x1|e1=0)', 'P(x1|e1=0, e2=0)'])
+    plt.title('Kalman Filtering with Evidence Equal to 0')
+    
+    plt.show()
+
+
+'''
+========= MAIN =========
+'''
+if __name__ == '__main__':
+    plot6()
