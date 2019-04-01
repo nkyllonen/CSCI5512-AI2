@@ -1,5 +1,5 @@
 '''
-CSCI 5512 - AI 2 - HW 2
+CSCI 5512 - AI 2 - HW 3
 Nikki Kyllonen
 kyllo089
 
