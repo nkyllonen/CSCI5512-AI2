@@ -176,6 +176,12 @@ if __name__ == '__main__':
               [UCell(-50, True), UCell(0), UCell(0)],
               [UCell(), UCell(0), UCell(0)]]
 
+  if (len(sys.argv) == 2 and str(sys.argv[1]) == "zeros"):
+    u_start = [[UCell(), UCell(0), UCell()],
+                [UCell(), UCell(0), UCell(0)],
+                [UCell(0), UCell(0), UCell(0)],
+                [UCell(), UCell(0), UCell(0)]]
+
   gamma = 0.8
 
   #print('rewards: ' , rewards)
