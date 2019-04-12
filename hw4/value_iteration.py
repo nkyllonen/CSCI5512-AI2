@@ -41,11 +41,11 @@ class UCell:
 
   def __str__(self):
     if (self.utility != None and self.is_end == False):
-      return ' {0} - {1} '.format(self.utility, self.best_act)
+      return ' {0:03.5f} - {1} '.format(self.utility, self.best_act)
     elif (self.utility == None):
-      return ' XXX '
+      return ' XXXXXXXXX '
     else:
-      return ' {0} '.format(self.utility)
+      return ' {0:03.5f} '.format(self.utility)
 
 '''
 has_converged: determine if difference in given utility
@@ -56,8 +56,9 @@ def has_converged(u0, u1):
 
   for i in range(len(u0)):
     for j in range(len(u0[i])):
-      if abs(u0[i][j].utility - u1[i][j].utility) > epsilon:
-        return False
+      if (u0[i][j].utility is not None):
+        if abs(u0[i][j].utility - u1[i][j].utility) > epsilon:
+          return False
   return True
 
 '''
@@ -100,6 +101,8 @@ def value_iteration(rewards, u_start, gamma):
   P_straight = 0.7
   P_right = 0.15
   P_left = 0.15
+
+  count = 0
 
   '''
   sum_a = 0
@@ -158,8 +161,10 @@ def value_iteration(rewards, u_start, gamma):
 
     # Place new values into u_old
     u_old = copy.deepcopy(u_new)
+    count = count + 1
   # END while
-  
+  print('-- {0} iterations --'.format(count))  
+
   return u_new
 
 def print2D(arr):
@@ -191,3 +196,6 @@ if __name__ == '__main__':
   print2D(u_start)
 
   u_final = value_iteration(rewards, u_start, gamma)
+  
+  print('\nu_final:')
+  print2D(u_final)
