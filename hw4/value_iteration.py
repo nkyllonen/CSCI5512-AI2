@@ -33,9 +33,13 @@ class UCell:
     self.is_end   (bool)  : T/F is this an end state cell
   '''
   def __init__(self, u = None, end = None):
-    self.utility = u or None
+    # TODO: fix initializing when just passing in a util value
+    self.utility = None
+    if u is not None:
+      self.utility = u
+    #self.utility = u or None
     self.is_end = end or False
-    self.best_act = ""
+    self.best_act = "none"
 
   def __str__(self):
     if (self.is_end == False):
@@ -84,14 +88,14 @@ def value_iteration(rewards, u_start, gamma):
 
   # Loop until convergence
   converged = False
-  while (!converged):
+  while (not converged):
     for i in range(len(u_old)):
       for j in range(len(u_old[i])):
         # Calculate updated values --> u_new
         # Bellman Equation:
         #   s' = (i', j') = (i, j) + action
         #   u_new(i,j) = R(i,j) + gamma * MAX_action(SUM_s'(P(s'|s(i,j), action)*u_old(s')))
-        if (u_old[i][j].value != None and u_old[i][j].is_end == False_:
+        if (u_old[i][j].value != None and u_old[i][j].is_end == False):
           max_sum = -1000
 
           for a in actions:
@@ -129,7 +133,7 @@ def value_iteration(rewards, u_start, gamma):
 ========= MAIN =========
 '''
 if __name__ == '__main__':
-  results = [[None, 50, None],
+  rewards = [[None, 50, None],
               [None, 0, -3],
               [-50, -1, -10],
               [None, -3, -2]]
@@ -141,4 +145,13 @@ if __name__ == '__main__':
 
   gamma = 0.8
 
-  u_final = value_iteration(results, u_start, gamma)
+  print('rewards: ' , rewards)
+
+  print('u_start:')
+
+  for i in range(len(u_start)):
+    for j in range(len(u_start[i])):
+      print(u_start[i][j], end='')
+    print('\n')
+
+  #u_final = value_iteration(rewards, u_start, gamma)
