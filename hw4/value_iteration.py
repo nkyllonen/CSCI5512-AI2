@@ -16,8 +16,8 @@ import random, sys, copy, math
 
 class Coord:
   def __init__(self, i, j):
-    self.x = i
-    self.y = j
+    self.x = int(i)
+    self.y = int(j)
 
   def __add__(self, other):
     return Coord(self.x + other.x, self.y + other.y)
@@ -33,17 +33,17 @@ class UCell:
     self.is_end   (bool)  : T/F is this an end state cell
   '''
   def __init__(self, u = None, end = None):
-    # TODO: fix initializing when just passing in a util value
     self.utility = None
     if u is not None:
       self.utility = u
-    #self.utility = u or None
     self.is_end = end or False
     self.best_act = "none"
 
   def __str__(self):
-    if (self.is_end == False):
+    if (self.utility != None and self.is_end == False):
       return ' {0} - {1} '.format(self.utility, self.best_act)
+    elif (self.utility == None):
+      return ' XXX '
     else:
       return ' {0} '.format(self.utility)
 
@@ -68,6 +68,21 @@ def turn(c, deg):
   return Coord(c.x*math.cos(rad) - c.y*math.sin(rad), c.x*math.sin(rad) + c.y*math.cos(rad))
 
 '''
+correct_next: determine if next state is a valid state
+'''
+def correct_next(u, s, s_next):
+  row = len(u)
+  col = len(u[0])
+
+  if (s_next.x < row and s_next.y < col and s_next.x >= 0 and s_next.y >= 0):
+    if (u[s_next.x][s_next.y].utility != None):
+      return s_next
+    else:
+      return s
+  else:
+    return s
+
+'''
 value_iteration:
 '''
 def value_iteration(rewards, u_start, gamma):
@@ -86,8 +101,26 @@ def value_iteration(rewards, u_start, gamma):
   P_right = 0.15
   P_left = 0.15
 
+  '''
+  sum_a = 0
+  # we go where we intend to
+  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + actions[a])
+  print(s_next)
+  #sum_a = sum_a + (P_straight*u_old[s_next.x][s_next.y].utility)
+  
+  # we go to the right instead
+  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], -90))
+  print(s_next)
+  #sum_a = sum_a + (P_right*u_old[s_next.x][s_next.y].utility)
+  
+  # we go to the left instead
+  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], 90))
+  print(s_next)
+  #sum_a = sum_a + (P_left*u_old[s_next.x][s_next.y].utility)
+  '''
   # Loop until convergence
   converged = False
+  
   while (not converged):
     for i in range(len(u_old)):
       for j in range(len(u_old[i])):
@@ -95,29 +128,29 @@ def value_iteration(rewards, u_start, gamma):
         # Bellman Equation:
         #   s' = (i', j') = (i, j) + action
         #   u_new(i,j) = R(i,j) + gamma * MAX_action(SUM_s'(P(s'|s(i,j), action)*u_old(s')))
-        if (u_old[i][j].value != None and u_old[i][j].is_end == False):
+        if (u_old[i][j].utility is not None and u_old[i][j].is_end is False):
           max_sum = -1000
 
           for a in actions:
             sum_a = 0
             # we go where we intend to
-            s_next = Coord(i, j) + actions[a]
-            sum_a = sum_a + (P_straight*u_old[s_next.x][s_next.y])
+            s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + actions[a])
+            sum_a = sum_a + (P_straight*u_old[s_next.x][s_next.y].utility)
             
             # we go to the right instead
-            s_next = Coord(i,j) + turn(actions[a], 90)
-            sum_a = sum_a + (P_right*u_old[s_next.x][s_next.y])
+            s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], -90))
+            sum_a = sum_a + (P_right*u_old[s_next.x][s_next.y].utility)
             
             # we go to the left instead
-            s_next = Coord(i,j) + turn(actions[a], -90)
-            sum_a = sum_a + (P_left*u_old[s_next.x][s_next.y])
+            s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], 90))
+            sum_a = sum_a + (P_left*u_old[s_next.x][s_next.y].utility)
 
             # compare to max
             if (sum_a > max_sum):
               max_sum = sum_a
           # END for a
           
-          u_new[i][j].value = rewards[i][j] + gamma * max_sum
+          u_new[i][j].utility = rewards[i][j] + gamma * max_sum
           # END if valid, non-end state
       # END for j
     # END for i
@@ -126,8 +159,15 @@ def value_iteration(rewards, u_start, gamma):
     # Place new values into u_old
     u_old = copy.deepcopy(u_new)
   # END while
-
+  
   return u_new
+
+def print2D(arr):
+  for i in range(len(arr)):
+    for j in range(len(arr[i])):
+      print(arr[i][j], end='')
+    print('\n')
+
 
 '''
 ========= MAIN =========
@@ -145,13 +185,9 @@ if __name__ == '__main__':
 
   gamma = 0.8
 
-  print('rewards: ' , rewards)
+  #print('rewards: ' , rewards)
 
   print('u_start:')
+  print2D(u_start)
 
-  for i in range(len(u_start)):
-    for j in range(len(u_start[i])):
-      print(u_start[i][j], end='')
-    print('\n')
-
-  #u_final = value_iteration(rewards, u_start, gamma)
+  u_final = value_iteration(rewards, u_start, gamma)
