@@ -48,16 +48,15 @@ class UCell:
       return ' {0:03.5f} '.format(self.utility)
 
 '''
-has_converged: determine if difference in given utility
-                tables is within epsilon error
+has_converged: determine if there is a difference in the 
+                chosen / determined best action to take
 '''
 def has_converged(u0, u1):
-  epsilon = 0.0001
-
   for i in range(len(u0)):
     for j in range(len(u0[i])):
       if (u0[i][j].utility is not None):
-        if abs(u0[i][j].utility - u1[i][j].utility) > epsilon:
+        # check to see if the action has changed
+        if u0[i][j].best_act != u1[i][j].best_act:
           return False
   return True
 
@@ -177,9 +176,9 @@ if __name__ == '__main__':
               [UCell(), UCell(0), UCell(0)]]
 
   if (len(sys.argv) == 2 and str(sys.argv[1]) == "zeros"):
-    u_start = [[UCell(), UCell(0), UCell()],
+    u_start = [[UCell(), UCell(0, True), UCell()],
                 [UCell(), UCell(0), UCell(0)],
-                [UCell(0), UCell(0), UCell(0)],
+                [UCell(0, True), UCell(0), UCell(0)],
                 [UCell(), UCell(0), UCell(0)]]
 
   gamma = 0.8
