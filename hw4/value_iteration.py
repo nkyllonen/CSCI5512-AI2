@@ -66,7 +66,7 @@ def turn(c, deg):
 '''
 value_iteration:
 '''
-def value_iteration(results, u_start, gamma):
+def value_iteration(rewards, u_start, gamma):
   # Utility tables
   u_old = u_start
   u_new = copy.deepcopy(u_old)
@@ -92,10 +92,10 @@ def value_iteration(results, u_start, gamma):
         #   s' = (i', j') = (i, j) + action
         #   u_new(i,j) = R(i,j) + gamma * MAX_action(SUM_s'(P(s'|s(i,j), action)*u_old(s')))
         if (u_old[i][j].value != None and u_old[i][j].is_end == False_:
-          sum_a = 0
           max_sum = -1000
 
           for a in actions:
+            sum_a = 0
             # we go where we intend to
             s_next = Coord(i, j) + actions[a]
             sum_a = sum_a + (P_straight*u_old[s_next.x][s_next.y])
@@ -111,8 +111,10 @@ def value_iteration(results, u_start, gamma):
             # compare to max
             if (sum_a > max_sum):
               max_sum = sum_a
-            
-        
+          # END for a
+          
+          u_new[i][j].value = rewards[i][j] + gamma * max_sum
+          # END if valid, non-end state
       # END for j
     # END for i
     converged = has_converged(u_old, u_new)
@@ -121,6 +123,7 @@ def value_iteration(results, u_start, gamma):
     u_old = copy.deepcopy(u_new)
   # END while
 
+  return u_new
 
 '''
 ========= MAIN =========
