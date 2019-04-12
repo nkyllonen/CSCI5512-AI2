@@ -92,37 +92,24 @@ def value_iteration(rewards, u_start, gamma):
   u_new = copy.deepcopy(u_old)
 
   # Possible actions
+  actions = {'up': Coord(-1, 0),
+              'right': Coord(0, 1),
+              'down': Coord(1, 0),
+              'left': Coord(0, -1)}
+  '''
   actions = {'up': Coord(0, 1),
               'right': Coord(1, 0),
               'down': Coord(0, -1),
               'left': Coord(-1, 0)}
-
+  '''
   # Probabilities
   P_straight = 0.7
   P_right = 0.15
   P_left = 0.15
 
-  count = 0
-
-  '''
-  sum_a = 0
-  # we go where we intend to
-  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + actions[a])
-  print(s_next)
-  #sum_a = sum_a + (P_straight*u_old[s_next.x][s_next.y].utility)
-  
-  # we go to the right instead
-  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], -90))
-  print(s_next)
-  #sum_a = sum_a + (P_right*u_old[s_next.x][s_next.y].utility)
-  
-  # we go to the left instead
-  s_next = correct_next(u_old, Coord(i,j), Coord(i, j) + turn(actions[a], 90))
-  print(s_next)
-  #sum_a = sum_a + (P_left*u_old[s_next.x][s_next.y].utility)
-  '''
   # Loop until convergence
   converged = False
+  count = 0
   
   while (not converged):
     for i in range(len(u_old)):
@@ -151,6 +138,7 @@ def value_iteration(rewards, u_start, gamma):
             # compare to max
             if (sum_a > max_sum):
               max_sum = sum_a
+              u_new[i][j].best_act = a
           # END for a
           
           u_new[i][j].utility = rewards[i][j] + gamma * max_sum
