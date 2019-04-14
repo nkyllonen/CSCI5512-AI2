@@ -107,9 +107,9 @@ def policy_iteration(rewards, utils, gamma):
         if (index is not None and consts[i][j] is not None):
           B.append(consts[i][j])
 
-    print('A: ')
-    Util.print1D(A)
-    print('\nB: ', B)
+#    print('A: ')
+#    Util.print1D(A)
+#    print('\nB: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
@@ -118,32 +118,39 @@ def policy_iteration(rewards, utils, gamma):
       coord = Util.get2DCoord(i)
       utils[coord.x][coord.y].utility = X[i]
 
+#    print('\nX: ', X)
+
     '''
     3. Use calcualted utilities to determine updated actions
     '''
     # store current actions
     u_old = copy.deepcopy(utils)
-    max_sum = -1000
 
-    for a in actions:
-      sum_a = 0
-      # we go where we intend to
-      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + actions[a])
-      sum_a = sum_a + (P_straight*utils[s_next.x][s_next.y].utility)
-      
-      # we go to the right instead
-      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], -90))
-      sum_a = sum_a + (P_right*utils[s_next.x][s_next.y].utility)
-      
-      # we go to the left instead
-      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], 90))
-      sum_a = sum_a + (P_left*utils[s_next.x][s_next.y].utility)
+    for i in range(len(utils)):
+      for j in range(len(utils[i])):
+        if (utils[i][j].utility is not None and utils[i][j].is_end is False):
+          max_sum = -1000
+          for a in actions:
+            sum_a = 0
+            # we go where we intend to
+            s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + actions[a])
+            sum_a = sum_a + (P_straight*utils[s_next.x][s_next.y].utility)
+            
+            # we go to the right instead
+            s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], -90))
+            sum_a = sum_a + (P_right*utils[s_next.x][s_next.y].utility)
+            
+            # we go to the left instead
+            s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], 90))
+            sum_a = sum_a + (P_left*utils[s_next.x][s_next.y].utility)
 
-      # compare to max
-      if (sum_a > max_sum):
-        max_sum = sum_a
-        utils[i][j].best_act = a
-    # END for a
+            # compare to max
+            if (sum_a > max_sum):
+              max_sum = sum_a
+              utils[i][j].best_act = a
+          # END for a
+      # END for j
+    # END for i
     
     converged = Util.has_converged(u_old, utils)
     count = count + 1
