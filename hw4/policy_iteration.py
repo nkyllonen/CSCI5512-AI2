@@ -67,29 +67,29 @@ def policy_iteration(rewards, utils, gamma):
           
           # we go where we intend to
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + actions[a])
-          if (coeffs[s_next.x][s_next.y] is None):
+          coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+          if (coeff_index is None):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_straight*utils[s_next.x][s_next.y].utility)
           else:
-            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
             coeffs[util_index][coeff_index] = gamma*P_straight
           
           # we go to the right instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], -90))
-          if (coeffs[s_next.x][s_next.y] is None):
+          coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+          if (coeff_index is None):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_right*utils[s_next.x][s_next.y].utility)
           else:
-            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
             coeffs[util_index][coeff_index] = gamma*P_right
 
           # we go to the left instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], 90))
-          if (coeffs[s_next.x][s_next.y] is None):
+          coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+          if (coeff_index is None):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_left*utils[s_next.x][s_next.y].utility)
           else:
-            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
             coeffs[util_index][coeff_index] = gamma*P_left
       # END for j
     # END for i
@@ -101,15 +101,15 @@ def policy_iteration(rewards, utils, gamma):
     '''
     A = coeffs
     B = []
-    for i in range(len(coeffs)):
-      for j in range(len(coeffs[i])):
-        if (coeffs[i][j] is not None):
-          #A.append(coeffs[i][j])
+    for i in range(len(consts)):
+      for j in range(len(consts[i])):
+        index = Util.getFlatIndex(i,j)
+        if (index is not None and consts[i][j] is not None):
           B.append(consts[i][j])
 
     print('A: ')
     Util.print1D(A)
-    print('B: ', B)
+    print('\nB: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
