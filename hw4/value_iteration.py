@@ -30,12 +30,7 @@ def value_iteration(rewards, u_start, gamma):
               'right': Coord(0, 1),
               'down': Coord(1, 0),
               'left': Coord(0, -1)}
-  '''
-  actions = {'up': Coord(0, 1),
-              'right': Coord(1, 0),
-              'down': Coord(0, -1),
-              'left': Coord(-1, 0)}
-  '''
+  
   # Probabilities
   P_straight = 0.7
   P_right = 0.15

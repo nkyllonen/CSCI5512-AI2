@@ -25,12 +25,12 @@ class UCell:
     self.best_act (str)   : direction of best action to take
     self.is_end   (bool)  : T/F is this an end state cell
   '''
-  def __init__(self, u = None, end = None):
+  def __init__(self, u = None, end = None, act = None):
     self.utility = None
     if u is not None:
       self.utility = u
     self.is_end = end or False
-    self.best_act = "none"
+    self.best_act = act or "none"
 
   def __str__(self):
     if (self.utility != None and self.is_end == False):
