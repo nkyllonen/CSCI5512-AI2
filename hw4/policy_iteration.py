@@ -36,22 +36,19 @@ def policy_iteration(rewards, utils, gamma):
   P_right = 0.15
   P_left = 0.15
 
-  # Coefficients -- 3D float array
-  coeffs = [[None, None, None],
-            [None, [], []],
-            [None, [], []],
-            [None, [], []]]
-
   # Loop until convergence
   converged = False
   count = 0
  
   while (not converged):
-    # reset coefficients
+    # Coefficients -- 3D float array
     coeffs = [[None, None, None],
               [None, [], []],
               [None, [], []],
               [None, [], []]]
+
+    # Constants -- for solving linear eqns
+    consts = copy.deepcopy(rewards)
 
     for i in range(len(utils)):
       for j in range(len(utils[i])):
@@ -67,22 +64,34 @@ def policy_iteration(rewards, utils, gamma):
           
           # we go where we intend to
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + actions[a])
-          coeffs[s_next.x][s_next.y].append(gamma*P_straight)
+          if (coeffs[s_next.x][s_next.y] is None):
+            # s_next is an endstate --> we know the utility value
+            consts[i][j] = consts[i][j] + (gamma*P_straight*utils[s_next.x][s_next.y].utility)
+          else:
+            coeffs[s_next.x][s_next.y].append(gamma*P_straight)
           
           # we go to the right instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], -90))
-          coeffs[s_next.x][s_next.y].append(gamma*P_right)
+          if (coeffs[s_next.x][s_next.y] is None):
+            # s_next is an endstate --> we know the utility value
+            consts[i][j] = consts[i][j] + (gamma*P_right*utils[s_next.x][s_next.y].utility)
+          else:
+           coeffs[s_next.x][s_next.y].append(gamma*P_right)
 
           # we go to the left instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], 90))
-          coeffs[s_next.x][s_next.y].append(gamma*P_left)
+          if (coeffs[s_next.x][s_next.y] is None):
+            # s_next is an endstate --> we know the utility value
+            consts[i][j] = consts[i][j] + (gamma*P_left*utils[s_next.x][s_next.y].utility)
+          else:
+            coeffs[s_next.x][s_next.y].append(gamma*P_left)
       # END for j
     # END for i
     '''
     2. Solve linear system --> Calculate utilities
-        A = [ C[i][j] ]
-        B = [ R[i][j] ]
-        X = [ U[i][j] ]
+        A = [ coeffs[i][j] ]
+        B = [ consts[i][j] ]
+        X = [ utils[i][j] ]
     '''
     A = []
     B = []
@@ -91,12 +100,15 @@ def policy_iteration(rewards, utils, gamma):
       for j in range(len(coeffs[i])):
         if (coeffs[i][j] is not None):
           A.append(coeffs[i][j])
-          B.append(rewards[i][j])
+          B.append(consts[i][j])
           i_map.append(Coord(i,j))
+
+    print('A: ', A)
+    print('B: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
-    # TODO: plug solved values into utils
+    # plug solved values into utils
     for i in range(len(i_map)):
       coord = i_map[i]
       utils[coord.x][coord.y].utility = X[i]
@@ -129,8 +141,10 @@ def policy_iteration(rewards, utils, gamma):
     # END for a
     
     converged = Util.has_converged(u_old, utils)
+    count = count + 1
   # END while
 
+  print('-- {0} iterations --'.format(count))  
   return utils
 
 '''
