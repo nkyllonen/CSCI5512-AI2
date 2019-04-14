@@ -80,12 +80,58 @@ def policy_iteration(rewards, utils, gamma):
     # END for i
     '''
     2. Solve linear system --> Calculate utilities
-        a = [ C[i][j] ]
-        b = [ R[i][j] ]
+        A = [ C[i][j] ]
+        B = [ R[i][j] ]
+        X = [ U[i][j] ]
     '''
+    A = []
+    B = []
+    i_map = []
+    for i in range(len(coeffs)):
+      for j in range(len(coeffs[i])):
+        if (coeffs[i][j] is not None):
+          A.append(coeffs[i][j])
+          B.append(rewards[i][j])
+          i_map.append(Coord(i,j))
 
+    X = np.linalg.solve(np.array(A), np.array(B))
+
+    # TODO: plug solved values into utils
+    for i in range(len(i_map)):
+      coord = i_map[i]
+      utils[coord.x][coord.y].utility = X[i]
+
+    '''
+    3. Use calcualted utilities to determine updated actions
+    '''
+    # store current actions
+    u_old = copy.deepcopy(utils)
+    max_sum = -1000
+
+    for a in actions:
+      sum_a = 0
+      # we go where we intend to
+      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + actions[a])
+      sum_a = sum_a + (P_straight*utils[s_next.x][s_next.y].utility)
+      
+      # we go to the right instead
+      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], -90))
+      sum_a = sum_a + (P_right*utils[s_next.x][s_next.y].utility)
+      
+      # we go to the left instead
+      s_next = Util.correct_next(utils, Coord(i,j), Coord(i, j) + Util.turn(actions[a], 90))
+      sum_a = sum_a + (P_left*utils[s_next.x][s_next.y].utility)
+
+      # compare to max
+      if (sum_a > max_sum):
+        max_sum = sum_a
+        utils[i][j].best_act = a
+    # END for a
+    
+    converged = Util.has_converged(u_old, utils)
   # END while
 
+  return utils
 
 '''
 ========= MAIN =========
@@ -101,8 +147,11 @@ if __name__ == '__main__':
             [UCell(-50, True), UCell(0, False, 'up'), UCell(0, False, 'up')],
             [UCell(), UCell(0, False, 'up'), UCell(0, False, 'up')]]
 
+  gamma = 0.8
+
   print('utils: ')
   Util.print2D(utils)
 
-  print('flat: ')
-  Util.print1D(Util.flatten(utils, True))
+  u_final = policy_iteration(rewards, utils, gamma)
+  print('\nu_final:')
+  Util.print2D(u_final)
