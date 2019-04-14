@@ -81,7 +81,7 @@ print2D:
 def print2D(arr):
   for i in range(len(arr)):
     for j in range(len(arr[i])):
-      print(arr[i][j], end='')
+      print('{0}\t'.format(arr[i][j]), end='')
     print('\n')
 
 '''
@@ -104,3 +104,22 @@ print1D:
 def print1D(arr):
   for i in range(len(arr)):
       print(arr[i])
+
+'''
+getFlatIndex: return corresponding flattened index
+  - hardcoded
+'''
+def getFlatIndex(i,j):
+  i_map = [[None, None, None],
+            [None, 0, 1],
+            [None, 2, 3],
+            [None, 4, 5]]
+  return i_map[i][j]
+
+'''
+get2DCoord: return corresponding 2D Coord index
+  - hardcoded
+'''
+def get2DCoord(i):
+  i_map = [Coord(1,1), Coord(1,2), Coord(2,1), Coord(2,2), Coord(3,1), Coord(3,2)]
+  return i_map[i]

@@ -41,11 +41,13 @@ def policy_iteration(rewards, utils, gamma):
   count = 0
  
   while (not converged):
-    # Coefficients -- 3D float array
-    coeffs = [[None, None, None],
-              [None, [], []],
-              [None, [], []],
-              [None, [], []]]
+    # Coefficients -- 2D float array
+    coeffs = [[0,0,0,0,0,0],
+              [0,0,0,0,0,0],
+              [0,0,0,0,0,0],
+              [0,0,0,0,0,0],
+              [0,0,0,0,0,0],
+              [0,0,0,0,0,0]]
 
     # Constants -- for solving linear eqns
     consts = copy.deepcopy(rewards)
@@ -61,6 +63,7 @@ def policy_iteration(rewards, utils, gamma):
         '''
         if (utils[i][j].utility is not None and utils[i][j].is_end is False):
           a = utils[i][j].best_act
+          util_index = Util.getFlatIndex(i,j)
           
           # we go where we intend to
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + actions[a])
@@ -68,7 +71,8 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_straight*utils[s_next.x][s_next.y].utility)
           else:
-            coeffs[s_next.x][s_next.y].append(gamma*P_straight)
+            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+            coeffs[util_index][coeff_index] = gamma*P_straight
           
           # we go to the right instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], -90))
@@ -76,7 +80,8 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_right*utils[s_next.x][s_next.y].utility)
           else:
-           coeffs[s_next.x][s_next.y].append(gamma*P_right)
+            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+            coeffs[util_index][coeff_index] = gamma*P_right
 
           # we go to the left instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], 90))
@@ -84,7 +89,8 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_left*utils[s_next.x][s_next.y].utility)
           else:
-            coeffs[s_next.x][s_next.y].append(gamma*P_left)
+            coeff_index = Util.getFlatIndex(s_next.x, s_next.y)
+            coeffs[util_index][coeff_index] = gamma*P_left
       # END for j
     # END for i
     '''
@@ -93,24 +99,23 @@ def policy_iteration(rewards, utils, gamma):
         B = [ consts[i][j] ]
         X = [ utils[i][j] ]
     '''
-    A = []
+    A = coeffs
     B = []
-    i_map = []
     for i in range(len(coeffs)):
       for j in range(len(coeffs[i])):
         if (coeffs[i][j] is not None):
-          A.append(coeffs[i][j])
+          #A.append(coeffs[i][j])
           B.append(consts[i][j])
-          i_map.append(Coord(i,j))
 
-    print('A: ', A)
+    print('A: ')
+    Util.print1D(A)
     print('B: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
     # plug solved values into utils
-    for i in range(len(i_map)):
-      coord = i_map[i]
+    for i in range(len(coeffs)):
+      coord = Util.get2DCoord(i)
       utils[coord.x][coord.y].utility = X[i]
 
     '''
