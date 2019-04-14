@@ -36,21 +36,56 @@ def policy_iteration(rewards, utils, gamma):
   P_right = 0.15
   P_left = 0.15
 
+  # Coefficients -- 3D float array
+  coeffs = [[None, None, None],
+            [None, [], []],
+            [None, [], []],
+            [None, [], []]]
+
   # Loop until convergence
   converged = False
   count = 0
  
-'''  
   while (not converged):
+    # reset coefficients
+    coeffs = [[None, None, None],
+              [None, [], []],
+              [None, [], []],
+              [None, [], []]]
+
     for i in range(len(utils)):
       for j in range(len(utils[i])):
-        # Calculate updated utility values using guessed actions
-        # Bellman Update without MAX:
-        #   s' = (i',j') = (i, j) + act_mat
+        '''
+        1. Calculate coefficient values using guessed actions
+           - Bellman Update without MAX:
+             a = utils(i,j).best_act
+             s' = (i',j') = (i, j) + a
+             utils(i,j) = R(i,j) + gamma * SUM_s'[P(s'|s(i,j), a)*u(s')]
+        '''
+        if (utils[i][j].utility is not None and utils[i][j].is_end is False):
+          a = utils[i][j].best_act
+          
+          # we go where we intend to
+          s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + actions[a])
+          coeffs[s_next.x][s_next.y].append(gamma*P_straight)
+          
+          # we go to the right instead
+          s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], -90))
+          coeffs[s_next.x][s_next.y].append(gamma*P_right)
+
+          # we go to the left instead
+          s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], 90))
+          coeffs[s_next.x][s_next.y].append(gamma*P_left)
       # END for j
     # END for i
+    '''
+    2. Solve linear system --> Calculate utilities
+        a = [ C[i][j] ]
+        b = [ R[i][j] ]
+    '''
+
   # END while
-'''
+
 
 '''
 ========= MAIN =========
@@ -68,3 +103,6 @@ if __name__ == '__main__':
 
   print('utils: ')
   Util.print2D(utils)
+
+  print('flat: ')
+  Util.print1D(Util.flatten(utils, True))

@@ -75,8 +75,32 @@ def correct_next(u, s, s_next):
   else:
     return s
 
+'''
+print2D:
+'''
 def print2D(arr):
   for i in range(len(arr)):
     for j in range(len(arr[i])):
       print(arr[i][j], end='')
     print('\n')
+
+'''
+flatten: 2D --> 1D
+'''
+def flatten(arr, isUtil):
+  out = []
+  for i in range(len(arr)):
+    for j in range(len(arr[0])):
+        if (isUtil):
+          if (arr[i][j].utility is not None and arr[i][j].is_end is False):
+            out.append(arr[i][j])
+        elif (arr[i][j] is not None):
+          out.append(arr[i][j])
+  return out
+
+'''
+print1D:
+'''
+def print1D(arr):
+  for i in range(len(arr)):
+      print(arr[i])

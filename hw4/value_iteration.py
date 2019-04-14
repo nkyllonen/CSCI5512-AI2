@@ -115,3 +115,6 @@ if __name__ == '__main__':
   
   print('\nu_final:')
   Util.print2D(u_final)
+  
+  print('flat: ')
+  Util.print1D(Util.flatten(u_final, True))
