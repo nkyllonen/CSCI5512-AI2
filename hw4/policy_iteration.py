@@ -72,7 +72,7 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_straight*utils[s_next.x][s_next.y].utility)
           else:
-            coeffs[util_index][coeff_index] = gamma*P_straight
+            coeffs[util_index][coeff_index] = coeffs[util_index][coeff_index] + gamma*P_straight
           
           # we go to the right instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], -90))
@@ -81,7 +81,7 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_right*utils[s_next.x][s_next.y].utility)
           else:
-            coeffs[util_index][coeff_index] = gamma*P_right
+            coeffs[util_index][coeff_index] = coeffs[util_index][coeff_index] + gamma*P_right
 
           # we go to the left instead
           s_next = Util.correct_next(utils, Coord(i,j), Coord(i,j) + Util.turn(actions[a], 90))
@@ -90,7 +90,7 @@ def policy_iteration(rewards, utils, gamma):
             # s_next is an endstate --> we know the utility value
             consts[i][j] = consts[i][j] + (gamma*P_left*utils[s_next.x][s_next.y].utility)
           else:
-            coeffs[util_index][coeff_index] = gamma*P_left
+            coeffs[util_index][coeff_index] = coeffs[util_index][coeff_index] + gamma*P_left
       # END for j
     # END for i
     '''
