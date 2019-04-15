@@ -123,3 +123,13 @@ get2DCoord: return corresponding 2D Coord index
 def get2DCoord(i):
   i_map = [Coord(1,1), Coord(1,2), Coord(2,1), Coord(2,2), Coord(3,1), Coord(3,2)]
   return i_map[i]
+
+'''
+transpose: return transposed matrix
+'''
+def transpose(mat):
+  out = [[0] * len(mat[0]) for x in range(len(mat))]
+  for i in range(len(mat)):
+    for j in range(len(mat[i])):
+      out[j][i] = mat[i][j]
+  return out

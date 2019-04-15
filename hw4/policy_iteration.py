@@ -40,14 +40,9 @@ def policy_iteration(rewards, utils, gamma):
   converged = False
   count = 0
  
-  while (not converged):
+  while (not converged and count < 1):
     # Coefficients -- 2D float array
-    coeffs = [[0,0,0,0,0,0],
-              [0,0,0,0,0,0],
-              [0,0,0,0,0,0],
-              [0,0,0,0,0,0],
-              [0,0,0,0,0,0],
-              [0,0,0,0,0,0]]
+    coeffs = [[0]*6 for x in range(6)]
 
     # Constants -- for solving linear eqns
     consts = copy.deepcopy(rewards)
@@ -57,7 +52,7 @@ def policy_iteration(rewards, utils, gamma):
         '''
         1. Calculate coefficient values using guessed actions
            - Bellman Update without MAX:
-             a = utils(i,j).best_act
+             a = current best action
              s' = (i',j') = (i, j) + a
              utils(i,j) = R(i,j) + gamma * SUM_s'[P(s'|s(i,j), a)*u(s')]
         '''
@@ -105,20 +100,21 @@ def policy_iteration(rewards, utils, gamma):
       for j in range(len(consts[i])):
         index = Util.getFlatIndex(i,j)
         if (index is not None and consts[i][j] is not None):
-          B.append(consts[i][j])
+          # negate values --> righthand side of linear system
+          B.append(-1.0*consts[i][j])
 
-#    print('A: ')
-#    Util.print1D(A)
-#    print('\nB: ', B)
+    print('A: ')
+    Util.print1D(A)
+    print('\nB: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
     # plug solved values into utils
-    for i in range(len(coeffs)):
+    for i in range(len(X)):
       coord = Util.get2DCoord(i)
       utils[coord.x][coord.y].utility = X[i]
 
-#    print('\nX: ', X)
+    print('\nX: ', X)
 
     '''
     3. Use calcualted utilities to determine updated actions
@@ -130,6 +126,8 @@ def policy_iteration(rewards, utils, gamma):
       for j in range(len(utils[i])):
         if (utils[i][j].utility is not None and utils[i][j].is_end is False):
           max_sum = -1000
+
+          # sum over possible states s'
           for a in actions:
             sum_a = 0
             # we go where we intend to
