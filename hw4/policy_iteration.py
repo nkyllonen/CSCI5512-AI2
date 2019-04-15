@@ -40,9 +40,16 @@ def policy_iteration(rewards, utils, gamma):
   converged = False
   count = 0
  
-  while (not converged and count < 1):
+  while (not converged):
     # Coefficients -- 2D float array
-    coeffs = [[0]*6 for x in range(6)]
+    #   - NEED to have -1 since each eqn: U(i,j) = ...
+    #     therefore need to move U(i,j) to the other side
+    coeffs = [[-1,0,0,0,0,0],
+              [0,-1,0,0,0,0],
+              [0,0,-1,0,0,0],
+              [0,0,0,-1,0,0],
+              [0,0,0,0,-1,0],
+              [0,0,0,0,0,-1]]
 
     # Constants -- for solving linear eqns
     consts = copy.deepcopy(rewards)
@@ -50,7 +57,7 @@ def policy_iteration(rewards, utils, gamma):
     for i in range(len(utils)):
       for j in range(len(utils[i])):
         '''
-        1. Calculate coefficient values using guessed actions
+        1. Calculate coefficient values using current best guess
            - Bellman Update without MAX:
              a = current best action
              s' = (i',j') = (i, j) + a
@@ -103,9 +110,9 @@ def policy_iteration(rewards, utils, gamma):
           # negate values --> righthand side of linear system
           B.append(-1.0*consts[i][j])
 
-    print('A: ')
-    Util.print1D(A)
-    print('\nB: ', B)
+#    print('A: ')
+#    Util.print1D(A)
+#    print('\nB: ', B)
 
     X = np.linalg.solve(np.array(A), np.array(B))
 
@@ -114,7 +121,7 @@ def policy_iteration(rewards, utils, gamma):
       coord = Util.get2DCoord(i)
       utils[coord.x][coord.y].utility = X[i]
 
-    print('\nX: ', X)
+#    print('\nX: ', X)
 
     '''
     3. Use calcualted utilities to determine updated actions
