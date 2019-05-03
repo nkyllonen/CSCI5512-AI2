@@ -46,13 +46,11 @@ split_on_input: split examples on an input
 output: new BTreeNode()
 '''
 def split_on_value(ex_indices, value):
-  global headers
-  global examples
-
   node = BTreeNode(value)  
+  val_index = headers[value]
 
   for e in ex_indices:
-    if (examples[e][headers[value] == 1):
+    if (examples[e][val_index] == '1'):
       node.left.append(e)
     else:
       node.right.append(e)
@@ -71,3 +69,6 @@ if __name__ == '__main__':
 
   infile = open(filename, 'r')
   build_ex_dict(infile)
+  
+  #print(split_on_value([1,2,3,4,5,6], 'A'))
+  print(split_on_value(examples.keys(), 'A'))
