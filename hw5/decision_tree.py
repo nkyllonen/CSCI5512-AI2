@@ -8,18 +8,32 @@ Problem 1: output a decision tree using the heuristic
 '''
 import sys
 
+# GLOBAL VARIABLES
+headers = dict()
+
+'''
+build_ex_dict: parse input file into a dictionary
+'''
 def build_ex_dict(infile):
+  global headers
   examples = dict()
 
   # parse csv column headers
-  headers = infile.readline().strip('\n').split(',')
+  h = infile.readline().strip('\n').split(',')
 
-  for h in headers:
-    examples[h] = list()
+  for i in range(len(h)):
+    headers[h[i]] = i
 
+  print(headers)
+
+  # parse example rows
   for line in infile:
-    
+    vals = line.strip('\n').split(',')
+    examples[int(vals[0])] = vals[1:len(vals)]
   # END for line
+
+  print('\n\nexamples:')
+  print(examples)
 
   infile.close()
   return examples
