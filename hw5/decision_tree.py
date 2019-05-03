@@ -7,16 +7,18 @@ Problem 1: output a decision tree using the heuristic
             based on entropy (as discussed in class)
 '''
 import sys
+from Nodes import BTreeNode
 
 # GLOBAL VARIABLES
 headers = dict()
+examples = dict()
 
 '''
 build_ex_dict: parse input file into a dictionary
 '''
 def build_ex_dict(infile):
   global headers
-  examples = dict()
+  global examples
 
   # parse csv column headers
   h = infile.readline().strip('\n').split(',')
@@ -24,7 +26,7 @@ def build_ex_dict(infile):
   for i in range(len(h)):
     headers[h[i]] = i
 
-  print(headers)
+  #print(headers)
 
   # parse example rows
   for line in infile:
@@ -32,11 +34,30 @@ def build_ex_dict(infile):
     examples[int(vals[0])] = vals[1:len(vals)]
   # END for line
 
-  print('\n\nexamples:')
-  print(examples)
+  #print('\n\nexamples:')
+  #print(examples)
 
   infile.close()
-  return examples
+
+'''
+split_on_input: split examples on an input
+  - ex_indices: int[]
+  - value:      str
+output: new BTreeNode()
+'''
+def split_on_value(ex_indices, value):
+  global headers
+  global examples
+
+  node = BTreeNode(value)  
+
+  for e in ex_indices:
+    if (examples[e][headers[value] == 1):
+      node.left.append(e)
+    else:
+      node.right.append(e)
+
+  return node
 
 '''
 ========= MAIN =========
@@ -49,4 +70,4 @@ if __name__ == '__main__':
     filename = str(sys.argv[1])
 
   infile = open(filename, 'r')
-  examples = build_ex_dict(infile)
+  build_ex_dict(infile)
