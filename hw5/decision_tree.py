@@ -100,8 +100,17 @@ def calc_gain(node):
 calc_entropy: sum over binary probabilities to calc total entropy
 '''
 def calc_entropy(p_true, p_false):
-  print('p_true: {0}\tp_false:{1}'.format(p_true, p_false))
-  return (-1.0*p_true*math.log2(p_true)) + (-1.0*p_false*math.log2(p_false))
+  #print('p_true: {0}\tp_false:{1}'.format(p_true, p_false))
+
+  sum_true = 0.0
+  sum_false = 0.0
+
+  if (p_true != 0):
+    sum_true = -1.0*p_true*math.log2(p_true)
+  if (p_false != 0):
+    sum_false = -1.0*p_false*math.log2(p_false)
+
+  return sum_true + sum_false
 
 '''
 find_max_gain: step through inputs and determine which
@@ -116,11 +125,7 @@ def find_max_gain(inputs, ex_indices, visited):
   for i in possible:
     node = split_on_value(ex_indices, i)
     
-    print(node)
-
-    #if (len(node.left) == 0 or len(node.right)==0):
-    #  print('all split to one side or the other')
-    #  return node
+    #print(node)
 
     gain = calc_gain(node)
 
@@ -165,4 +170,4 @@ if __name__ == '__main__':
   inputs = [ h for h in headers if len(h) == 1 ]
 
   tree = build_tree(inputs, copy.deepcopy(examples), [])
-  print(tree)
+  #print(tree)
