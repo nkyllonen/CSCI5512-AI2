@@ -146,11 +146,13 @@ def find_max_gain(inputs, ex_indices, visited):
   # END for i
 
   print('\n****CHOSE: {0} -- gain: {1}****'.format(max_input_node.value, max_gain))
-  print(max_input_node)
+  #print(max_input_node)
 
   return max_input_node
 
 '''
+build_tree: build tree by recursively building first the left
+            child branch, then the right child branch
 '''
 def build_tree(inputs, exs, visited):
   # base cases
@@ -161,11 +163,48 @@ def build_tree(inputs, exs, visited):
 
   node = find_max_gain(inputs, exs, visited)
   visited.append(node.value)
+
+  node.set_leaf_values(examples, headers)
   
-  # recursively split each side
-  node.left_node = build_tree(inputs, node.left, copy.deepcopy(visited))
-  node.right_node = build_tree(inputs, node.right, copy.deepcopy(visited))
+  # recursively split each side if we need to
+  if (node.left != [] and node.right != []):
+    node.left_node = build_tree(inputs, node.left, copy.deepcopy(visited))
+    node.right_node = build_tree(inputs, node.right, copy.deepcopy(visited))
   return node
+
+'''
+'''
+def display_tree(root):
+  arr = ['']
+  arr = node_to_array(root, arr, 1)
+
+  print(arr)
+  
+'''
+'''
+def node_to_array(node, arr, index):
+  # base cases
+  if (node == None or node.value == None):
+    return
+
+  # double length to make room
+  if (2*index + 1 > len(arr)):
+    arr = arr + 3*len(arr)*[" "]
+ 
+  arr[index] = node.value
+ 
+  # check if children are leaves 
+  if (node.left_node == None):
+    arr[2*index] = node.left_value
+  else:
+    return node_to_array(node.left_node, arr, 2*index)
+
+  if (node.right_node == None):
+    arr[2*index + 1] = node.right_value
+  else:
+    node_to_array(node.right_node, arr, 2*index + 1)
+
+  return arr
 
 '''
 ========= MAIN =========
@@ -181,6 +220,5 @@ if __name__ == '__main__':
   build_ex_dict(infile)
   
   inputs = [ h for h in headers if len(h) == 1 ]
-
   tree = build_tree(inputs, copy.deepcopy(examples), [])
-  #print(tree)
+  display_tree(tree)
