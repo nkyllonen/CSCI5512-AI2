@@ -53,9 +53,9 @@ def split_on_value(ex_indices, value):
   return node
 
 '''
-calc_entropy_values: calc entropies of parent node and each child
+calc_gain: calc gain of splitting given node
 '''
-def calc_entropy_values(node):
+def calc_gain(node):
   total_left = len(node.left)
   total_right = len(node.right)
   total = total_left + total_right
@@ -92,7 +92,8 @@ def calc_entropy_values(node):
   after_t = calc_entropy(left_true / total_left, left_false / total_left)
   after_f = calc_entropy(right_true / total_right, right_false / total_right)
 
-  return {'before': before, 'after_true': after_t, 'after_false': after_f}
+  print((total_left / total)*after_t + (total_right / total)*after_f)
+  return before - ((total_left / total)*after_t + (total_right / total)*after_f)
 
 '''
 calc_entropy: sum over binary probabilities to calc total entropy
@@ -116,4 +117,5 @@ if __name__ == '__main__':
   node = split_on_value(examples.keys(), 'A')
   print(node)
 
-  print(calc_entropy_values(node))
+  gain = calc_gain(node)
+  print(gain)
