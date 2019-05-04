@@ -18,8 +18,8 @@ class BTreeNode:
     self.right = right or []
     self.left_node = None
     self.right_node = None
-    self.left_value = None
-    self.right_value = None
+    self.left_value = ' '
+    self.right_value = ' '
 
   def __str__(self):
     return '''\nvalue: {0}

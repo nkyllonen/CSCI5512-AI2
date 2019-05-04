@@ -175,9 +175,8 @@ def build_tree(inputs, exs, visited):
 '''
 '''
 def display_tree(root):
-  arr = ['']
+  arr = [''] * 10
   arr = node_to_array(root, arr, 1)
-
   print(arr)
   
 '''
@@ -185,24 +184,27 @@ def display_tree(root):
 def node_to_array(node, arr, index):
   # base cases
   if (node == None or node.value == None):
-    return
+    return arr
 
-  # double length to make room
+  # triple length to make room
   if (2*index + 1 > len(arr)):
-    arr = arr + 3*len(arr)*[" "]
+    arr = arr + len(arr)*[' ']
  
   arr[index] = node.value
+
+  if (arr[index] == None):
+    arr[index] = ' '
  
   # check if children are leaves 
   if (node.left_node == None):
     arr[2*index] = node.left_value
   else:
-    return node_to_array(node.left_node, arr, 2*index)
+    arr = node_to_array(node.left_node, arr, 2*index)
 
   if (node.right_node == None):
     arr[2*index + 1] = node.right_value
   else:
-    node_to_array(node.right_node, arr, 2*index + 1)
+    arr = node_to_array(node.right_node, arr, 2*index + 1)
 
   return arr
 
