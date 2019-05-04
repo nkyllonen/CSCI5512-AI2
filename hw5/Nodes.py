@@ -12,10 +12,12 @@ class BTreeNode:
   left:   int[] -- when True
   right:  int[] -- when False
   '''
-  def __init__(self, val):
+  def __init__(self, val, left = None, right = None):
     self.value = val
-    self.left = []
-    self.right = []
+    self.left = left or []
+    self.right = right or []
+    self.left_node = None
+    self.right_node = None
 
   def __str__(self):
     return '''value: {0}
