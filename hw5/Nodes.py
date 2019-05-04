@@ -34,10 +34,10 @@ class BTreeNode:
     out = headers['output'] - 1
 
     if (self.left == []):
-      self.left_value = None
+      self.left_value = ' '
       return
     if (self.right == []):
-      self.right_value = None
+      self.right_value = ' '
       return
 
     left_true = 0
