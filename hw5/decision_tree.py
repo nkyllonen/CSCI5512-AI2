@@ -12,6 +12,7 @@ from Nodes import BTreeNode
 # GLOBAL VARIABLES
 headers = dict()
 examples = dict()
+num_inputs = 0
 
 '''
 build_ex_dict: parse input file into a dictionary
@@ -19,12 +20,16 @@ build_ex_dict: parse input file into a dictionary
 def build_ex_dict(infile):
   global headers
   global examples
+  global num_inputs
 
   # parse csv column headers
   h = infile.readline().strip('\n').split(',')
 
   for i in range(len(h)):
     headers[h[i]] = i
+    if (len(h[i])==1):
+      num_inputs += 1
+  # END for i
   
   # parse example rows
   for line in infile:
@@ -68,7 +73,6 @@ def calc_gain(node):
   right_true = 0
   right_false = 0
 
-  #val_index = headers[node.value]
   val_index = headers['output'] - 1
  
   # go through left examples 
@@ -91,8 +95,13 @@ def calc_gain(node):
 
   # calculate entropies
   before = calc_entropy(total_true / total, total_false / total)
-  after_t = calc_entropy(left_true / total_left, left_false / total_left)
-  after_f = calc_entropy(right_true / total_right, right_false / total_right)
+  after_t = 0.0
+  after_f = 0.0
+
+  if (total_left > 0):
+    after_t = calc_entropy(left_true / total_left, left_false / total_left)
+  if (total_right > 0):
+    after_f = calc_entropy(right_true / total_right, right_false / total_right)
 
   return before - ((total_left / total)*after_t + (total_right / total)*after_f)
 
@@ -136,22 +145,26 @@ def find_max_gain(inputs, ex_indices, visited):
       max_input_node = node
   # END for i
 
-  print('\n****CHOSE: {0} -- gain: {1}****\n'.format(max_input_node.value, max_gain))
+  print('\n****CHOSE: {0} -- gain: {1}****'.format(max_input_node.value, max_gain))
+  print(max_input_node)
+
   return max_input_node
 
 '''
 '''
 def build_tree(inputs, exs, visited):
-  # base case
+  # base cases
   if (len(exs) < 2):
+    return
+  elif (len(visited) >= num_inputs):
     return
 
   node = find_max_gain(inputs, exs, visited)
   visited.append(node.value)
   
   # recursively split each side
-  node.left_node = build_tree(inputs, node.left, visited)
-  node.right_node = build_tree(inputs, node.right, visited)
+  node.left_node = build_tree(inputs, node.left, copy.deepcopy(visited))
+  node.right_node = build_tree(inputs, node.right, copy.deepcopy(visited))
   return node
 
 '''
