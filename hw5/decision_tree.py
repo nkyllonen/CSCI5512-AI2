@@ -6,7 +6,7 @@ kyllo089
 Problem 1: output a decision tree using the heuristic
             based on entropy (as discussed in class)
 '''
-import sys
+import sys, math
 from Nodes import BTreeNode
 
 # GLOBAL VARIABLES
@@ -25,17 +25,12 @@ def build_ex_dict(infile):
 
   for i in range(len(h)):
     headers[h[i]] = i
-
-  #print(headers)
-
+  
   # parse example rows
   for line in infile:
     vals = line.strip('\n').split(',')
     examples[int(vals[0])] = vals[1:len(vals)]
   # END for line
-
-  #print('\n\nexamples:')
-  #print(examples)
 
   infile.close()
 
@@ -47,7 +42,7 @@ output: new BTreeNode()
 '''
 def split_on_value(ex_indices, value):
   node = BTreeNode(value)  
-  val_index = headers[value]
+  val_index = headers[value] - 1
 
   for e in ex_indices:
     if (examples[e][val_index] == '1'):
@@ -56,6 +51,54 @@ def split_on_value(ex_indices, value):
       node.right.append(e)
 
   return node
+
+'''
+calc_entropy_values: calc entropies of parent node and each child
+'''
+def calc_entropy_values(node):
+  total_left = node.left.length()
+  total_right = node.right.length()
+  total = total_left + total_right
+
+  total_true = 0
+  total_false = 0
+  left_true = 0
+  left_false = 0
+  right_true = 0
+  right_false = 0
+
+  val_index = headers[node.value]
+ 
+  # go through left examples 
+  for e in node.left:
+    if (examples[e][val_index] == '1'):
+      total_true += 1
+      left_true += 1
+    else:
+      total_false += 1
+      left_false += 1
+  
+  # go through right examples
+  for e in node.right:
+    if (examples[e][val_index] == '1'):
+      total_true += 1
+      right_true += 1
+    else:
+      total_false += 1
+      right_false += 1
+
+  # calculate entropies
+  before = calc_entropy(total_true / total, total_false / total)
+  after_t = calc_entropy(left_true / total_left, left_false / total_left)
+  after_f = calc_entropy(right_true / total_right, right_false / total_right)
+
+  return {'before': before, 'after_true': after_t, 'after_false': after_f}
+
+'''
+calc_entropy: sum over binary probabilities to calc total entropy
+'''
+def calc_entropy(p_true, p_false):
+  return (-1.0*p_true*math.log2(p_true)) + (-1.0*p_false*math.log2(p_false))
 
 '''
 ========= MAIN =========
