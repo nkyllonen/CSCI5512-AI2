@@ -20,7 +20,7 @@ class BTreeNode:
     self.right_node = None
 
   def __str__(self):
-    return '''value: {0}
+    return '''\nvalue: {0}
               {0}.left: {1}
               {0}.right: {2}'''.format(
               self.value, self.left, self.right)

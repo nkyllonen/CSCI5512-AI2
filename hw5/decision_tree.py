@@ -68,7 +68,8 @@ def calc_gain(node):
   right_true = 0
   right_false = 0
 
-  val_index = headers[node.value]
+  #val_index = headers[node.value]
+  val_index = headers['output'] - 1
  
   # go through left examples 
   for e in node.left:
@@ -99,40 +100,53 @@ def calc_gain(node):
 calc_entropy: sum over binary probabilities to calc total entropy
 '''
 def calc_entropy(p_true, p_false):
+  print('p_true: {0}\tp_false:{1}'.format(p_true, p_false))
   return (-1.0*p_true*math.log2(p_true)) + (-1.0*p_false*math.log2(p_false))
 
 '''
 find_max_gain: step through inputs and determine which
                 maximizes gain
 '''
-def find_max_gain(inputs, ex_indices):
+def find_max_gain(inputs, ex_indices, visited):
   max_gain = -1000
   max_input_node = BTreeNode(None)
 
-  for i in inputs:
+  possible = [ i for i in inputs if i not in visited ]
+
+  for i in possible:
     node = split_on_value(ex_indices, i)
+    
+    print(node)
+
+    #if (len(node.left) == 0 or len(node.right)==0):
+    #  print('all split to one side or the other')
+    #  return node
+
     gain = calc_gain(node)
+
+    #print('--->{0} -- gain: {1}\n'.format(node.value, gain))
 
     if (gain > max_gain):
       max_gain = gain
       max_input_node = node
+  # END for i
 
+  print('\n****CHOSE: {0} -- gain: {1}****\n'.format(max_input_node.value, max_gain))
   return max_input_node
 
 '''
 '''
-def build_tree(inputs, exs):
+def build_tree(inputs, exs, visited):
   # base case
   if (len(exs) < 2):
     return
 
-  # NOTE: do I need to keep track of which inputs I've already split on?
-  node = find_max_gain(inputs, exs)
+  node = find_max_gain(inputs, exs, visited)
+  visited.append(node.value)
   
   # recursively split each side
-  node.left_node = build_tree(inputs, node.left)
-  node.right_node = build_tree(inputs, node.right)
-
+  node.left_node = build_tree(inputs, node.left, visited)
+  node.right_node = build_tree(inputs, node.right, visited)
   return node
 
 '''
@@ -150,5 +164,5 @@ if __name__ == '__main__':
   
   inputs = [ h for h in headers if len(h) == 1 ]
 
-  tree = build_tree(inputs, copy.deepcopy(examples))
+  tree = build_tree(inputs, copy.deepcopy(examples), [])
   print(tree)
