@@ -56,8 +56,8 @@ def split_on_value(ex_indices, value):
 calc_entropy_values: calc entropies of parent node and each child
 '''
 def calc_entropy_values(node):
-  total_left = node.left.length()
-  total_right = node.right.length()
+  total_left = len(node.left)
+  total_right = len(node.right)
   total = total_left + total_right
 
   total_true = 0
@@ -113,5 +113,7 @@ if __name__ == '__main__':
   infile = open(filename, 'r')
   build_ex_dict(infile)
   
-  #print(split_on_value([1,2,3,4,5,6], 'A'))
-  print(split_on_value(examples.keys(), 'A'))
+  node = split_on_value(examples.keys(), 'A')
+  print(node)
+
+  print(calc_entropy_values(node))
