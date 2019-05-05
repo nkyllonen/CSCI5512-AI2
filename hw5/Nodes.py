@@ -23,14 +23,14 @@ class BTreeNode:
 
   def __str__(self):
     return '''\nvalue: {0}
-              {0}.left: {1}
-              {0}.right: {2}'''.format(
-              self.value, self.left, self.right)
+              {0}.left = {1} : \t{3}
+              {0}.right = {2} : \t{4}'''.format(
+              self.value, self.left_value, self.right_value, self.left, self.right)
 
   '''
   set_leaf_values: determine T/F value for left and right
   '''
-  def set_leaf_values(self, examples, headers):
+  def set_leaf_values(self, examples, headers, display):
     out = headers['output'] - 1
 
     if (self.left == []):
@@ -60,3 +60,10 @@ class BTreeNode:
       self.right_value = '1'
     else:
       self.right_value = '0'
+
+    # display how many of each
+    if (display):
+      print('\n{0}.left: {1}T, {2}F'.format(
+            self.value, left_true, len(self.left)-left_true))
+      print('{0}.right: {1}T, {2}F'.format(
+            self.value, right_true, len(self.right)-right_true))

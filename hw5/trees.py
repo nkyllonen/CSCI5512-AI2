@@ -23,6 +23,8 @@ def output_depth_one(inputs):
   for i in inputs:
     node = split_on_value(exs, i)
     gain = calc_gain(node)
+    node.set_leaf_values(examples, headers, True)
+
     print(node)
     print('--->gain: {0}'.format(gain))
   # END for i
@@ -41,7 +43,6 @@ if __name__ == '__main__':
 
   infile = open(filename, 'r')
   (examples, headers, num_inputs) = build_ex_dict(infile)
-  print(examples)
   
   inputs = [ h for h in headers if len(h) == 1 ]
   output_depth_one(inputs)

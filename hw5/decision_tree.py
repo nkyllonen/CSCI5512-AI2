@@ -166,7 +166,7 @@ def build_tree(inputs, exs, visited):
   node = find_max_gain(inputs, exs, visited)
   visited.append(node.value)
 
-  node.set_leaf_values(examples, headers)
+  node.set_leaf_values(examples, headers, False)
   
   # recursively split each side if we need to
   if (node.left != [] and node.right != []):
