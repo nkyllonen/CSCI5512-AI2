@@ -39,7 +39,7 @@ def build_ex_dict(infile):
   # END for line
 
   infile.close()
-  return examples
+  return (examples, headers, num_inputs)
 
 '''
 split_on_input: split examples on an input
@@ -224,7 +224,6 @@ def node_to_array(node, arr, index):
 ========= MAIN =========
 '''
 if __name__ == '__main__':
-  #global print_nodes
   # default input file
   filename = 'inTree.csv'
   
