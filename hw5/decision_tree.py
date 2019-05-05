@@ -13,6 +13,7 @@ from Nodes import BTreeNode
 headers = dict()
 examples = dict()
 num_inputs = 0
+print_nodes = False
 
 '''
 build_ex_dict: parse input file into a dictionary
@@ -144,9 +145,10 @@ def find_max_gain(inputs, ex_indices, visited):
       max_gain = gain
       max_input_node = node
   # END for i
-
-  print('\n****CHOSE: {0} -- gain: {1}****'.format(max_input_node.value, max_gain))
-  #print(max_input_node)
+  
+  if (print_nodes):
+    print('\n****CHOSE: {0} -- gain: {1}****'.format(max_input_node.value, max_gain))
+    print(max_input_node)
 
   return max_input_node
 
@@ -184,9 +186,10 @@ def display_tree(root):
   for val in arr:
     if (val != None):
       output += val + '_'
-  
-  output = output[0:len(output)-2]
-  print(output)
+
+  # ignore last _ 
+  output = output[0:len(output)-1]
+  print('\n' + output)
   
 '''
 '''
@@ -195,7 +198,7 @@ def node_to_array(node, arr, index):
   if (node == None or node.value == None):
     return arr
 
-  # triple length to make room
+  # double length to make room
   if (2*index + 1 > len(arr)):
     arr = arr + len(arr)*[None]
  
@@ -221,11 +224,14 @@ def node_to_array(node, arr, index):
 ========= MAIN =========
 '''
 if __name__ == '__main__':
+  #global print_nodes
   # default input file
   filename = 'inTree.csv'
   
-  if (len(sys.argv) == 2):
+  if (len(sys.argv) > 1):
     filename = str(sys.argv[1])
+    if (len(sys.argv) == 3 and sys.argv[2] == 'display'):
+      print_nodes = True
 
   infile = open(filename, 'r')
   build_ex_dict(infile)
