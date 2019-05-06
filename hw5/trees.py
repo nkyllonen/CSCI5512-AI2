@@ -63,7 +63,8 @@ def three_trees(inputs, nodes):
     # step through all examples
     acc = 0.0
     for e in exs:
-      a = triplet[0].accuracy_of(e, examples, headers)
+      a = 1.0
+      a *= triplet[0].accuracy_of(e, examples, headers)
       a *= triplet[1].accuracy_of(e, examples, headers)
       a *= triplet[2].accuracy_of(e, examples, headers)
       acc += a

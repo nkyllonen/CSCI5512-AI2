@@ -22,3 +22,10 @@ ii) run with 1 argument -- provide csv filename -- default tree depth = 1
 ii) run with 2 arguments -- provide csv filename + tree depth
     $ python3 trees.py <file_containing_examples.csv> <{1, 3}>
 
+## Problem 6
+i) run without arguments -- default alpha = 0.1, N = 500
+    $ python3 gradient_descent.py
+ii) run with 1 argument -- default N = 500
+    $ python3 gradient_descent.py <alpha>
+iii) run with 2 arguments
+    $ python3 gradient_descent.py <alpha> <N iterations>
