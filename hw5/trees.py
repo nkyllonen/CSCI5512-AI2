@@ -54,7 +54,7 @@ def three_trees(inputs, nodes):
   # 2. calculate combined accuracies
   max_acc = -100
   max_trip = ''
-  triples = ['ABC']
+  #triples = ['ABC']
   for t in triples:
     # gather corresponding nodes
     triplet = []
@@ -67,7 +67,7 @@ def three_trees(inputs, nodes):
       a *= triplet[1].accuracy_of(e, examples, headers)
       a *= triplet[2].accuracy_of(e, examples, headers)
       acc += a
-      print('ex {0} : a = {1}'.format(e, a))
+      #print('ex {0} : a = {1}'.format(e, a))
     print('{0} splits with {1:0.2f}% accuracy'.format(t, acc*100.0))
     if (acc > max_acc):
       max_acc = acc
