@@ -13,9 +13,9 @@ from Nodes import BTreeNode
 headers = dict()
 examples = dict()
 num_inputs = 0
-print_nodes = False
 
 '''
+output_depth_one: output possible splits using given inputs
 '''
 def output_depth_one(inputs):
   exs = list(examples.keys())
@@ -38,8 +38,6 @@ if __name__ == '__main__':
   
   if (len(sys.argv) > 1):
     filename = str(sys.argv[1])
-    if (len(sys.argv) == 3 and sys.argv[2] == 'display'):
-      print_nodes = True
 
   infile = open(filename, 'r')
   (examples, headers, num_inputs) = build_ex_dict(infile)

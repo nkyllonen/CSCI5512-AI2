@@ -50,20 +50,27 @@ class BTreeNode:
       if (examples[e][out] == '1'):
         right_true += 1
    
-    # assign according to majority 
+    # assign according to majority
+    accuracy = 0.0
     if (left_true/len(self.left) > 0.5):
       self.left_value = '1'
+      accuracy += left_true
     else:
       self.left_value = '0'
+      accuracy += (len(self.left) - left_true)
     
     if (right_true/len(self.right) > 0.5):
       self.right_value = '1'
+      accuracy += right_true
     else:
       self.right_value = '0'
+      accuracy += (len(self.right) - right_true)
 
+    accuracy /= len(examples)
+    accuracy *= 100.0
     # display how many of each
     if (display):
-      print('\n{0}.left: {1}T, {2}F'.format(
-            self.value, left_true, len(self.left)-left_true))
-      print('{0}.right: {1}T, {2}F'.format(
-            self.value, right_true, len(self.right)-right_true))
+      print('\n{0}.left:  {1}T, {2}F ---- {3}% accuracy'.format(
+            self.value, left_true, len(self.left)-left_true, accuracy))
+      print('{0}.right: {1}T, {2}F ---- {3}% accuracy'.format(
+            self.value, right_true, len(self.right)-right_true, accuracy))
