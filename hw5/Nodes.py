@@ -20,6 +20,7 @@ class BTreeNode:
     self.right_node = None
     self.left_value = ' '
     self.right_value = ' '
+    self.accuracy = 0.0
 
   def __str__(self):
     return '''\nvalue: {0}
@@ -51,26 +52,45 @@ class BTreeNode:
         right_true += 1
    
     # assign according to majority
-    accuracy = 0.0
+    self.accuracy = 0.0
     if (left_true/len(self.left) > 0.5):
       self.left_value = '1'
-      accuracy += left_true
+      self.accuracy += left_true
     else:
       self.left_value = '0'
-      accuracy += (len(self.left) - left_true)
+      self.accuracy += (len(self.left) - left_true)
     
     if (right_true/len(self.right) > 0.5):
       self.right_value = '1'
-      accuracy += right_true
+      self.accuracy += right_true
     else:
       self.right_value = '0'
-      accuracy += (len(self.right) - right_true)
+      self.accuracy += (len(self.right) - right_true)
 
-    accuracy /= len(examples)
-    accuracy *= 100.0
+    self.accuracy /= len(examples)
     # display how many of each
     if (display):
-      print('\n{0}.left:  {1}T, {2}F ---- {3}% accuracy'.format(
-            self.value, left_true, len(self.left)-left_true, accuracy))
-      print('{0}.right: {1}T, {2}F ---- {3}% accuracy'.format(
-            self.value, right_true, len(self.right)-right_true, accuracy))
+      print('\n{0}.left:  {1}T, {2}F'.format(
+            self.value, left_true, len(self.left)-left_true))
+      print('{0}.right: {1}T, {2}F'.format(
+            self.value, right_true, len(self.right)-right_true))
+      print('--->{0} splits with {1}% accuracy'.format(self.value, 100.0*self.accuracy))
+
+  '''
+  accuracy_of: return accuracy of given evidence
+  '''
+  def accuracy_of(self, eid, examples, headers):
+    output = examples[eid][headers['output']-1]
+
+    # if our left branch classification matches
+    if (output == self.left_value):
+      if (eid in self.left):
+        return self.accuracy
+      else:
+        return 1-self.accuracy
+    # if our right branch classification matches
+    else:
+      if (eid in self.right):
+        return self.accuracy
+      else:
+        return 1-self.accuracy
