@@ -94,3 +94,12 @@ class BTreeNode:
         return self.accuracy
       else:
         return 1-self.accuracy
+
+  '''
+  get_classification: determine how given evidence was split
+  '''
+  def get_classification(self, eid):
+    if (eid in self.left):
+      return self.left_value
+    else:
+      return self.right_value

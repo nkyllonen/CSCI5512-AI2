@@ -61,14 +61,21 @@ def three_trees(inputs, nodes):
     for ch in t:
       triplet.append(nodes[ch])
     # step through all examples
-    acc = 0.0
+    acc = 0
     for e in exs:
-      a = 1.0
+      actual = examples[e][headers['output']-1]
+      '''a = 1.0
       a *= triplet[0].accuracy_of(e, examples, headers)
       a *= triplet[1].accuracy_of(e, examples, headers)
       a *= triplet[2].accuracy_of(e, examples, headers)
-      acc += a
-      #print('ex {0} : a = {1}'.format(e, a))
+      acc += a'''
+      match0 = (actual == triplet[0].get_classification(e))
+      match1 = (actual == triplet[1].get_classification(e))
+      match2 = (actual == triplet[2].get_classification(e))
+      if (match0 and match1) or (match0 and match2) or (match1 and match2):
+        acc += 1
+    # END for e
+    acc /= len(exs)
     print('{0} splits with {1:0.2f}% accuracy'.format(t, acc*100.0))
     if (acc > max_acc):
       max_acc = acc
