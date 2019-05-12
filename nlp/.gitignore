@@ -1,0 +1,9 @@
+# local env files
+.env.local
+.env.*.local
+.env
+
+# other stuff from 5117 group assignment 1
+__pycache__/
+*.orig
+__pycache__
