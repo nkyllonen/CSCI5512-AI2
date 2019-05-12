@@ -3,49 +3,60 @@ Nikki Kyllonen - kyllo089
 CSCI 5512 Final Project
 
 Bags of Popcorn Movie Classifier
+- tutorial: https://www.kaggle.com/c/word2vec-nlp-tutorial/overview/description
 '''
 import pandas as pd
 from bs4 import BeautifulSoup
 import re, nltk
 
-# NLTK
-nltk.download()
+# NLTK -- download stopwords data sets
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 # GLOBALS
-data_dir = 'data/'
-stopwords_eng = stopwords.words('english')
+data_dir = 'data/word2vec-nlp-tutorial/'
+stopwords_eng = set(stopwords.words('english'))
 
-# 1. READ IN TRAINING DATA
-#   - header=0 : first line contains column headers
-#   - quoting=3 : ignore double quotes
-train = pd.read_csv(data_dir + 'labeledTrainData.tsv', header=0,\
-                    delimiter='\t', quoting=3)
-
-#print('train["review"][0]' , train["review"][0])
-
-# 2. CLEAN DATA
-# 2.1 get review text only -- without tags or markup
 '''
-ex1 = BeautifulSoup(train["review"][0])
-print(ex1.get_text()) # cleaned up, text only
+clean_data: remove punctuation, numbers, and stopwords
 '''
-# 2.2 clean out punctuation and numbers
+def clean_data(raw_data):
+  reviews = []
+  total = raw_data['review'].size # get column size
+  cur = 0
+
+  for r in raw_data['review']:
+    # following BeautifulSoup UserWarning -- specify parser
+    cleaned = BeautifulSoup(r, features='html.parser')
+
+    # substitute not letters with spaces
+    letters_only = re.sub('[^a-zA-Z]', ' ', cleaned.get_text())
+    lower_case = letters_only.lower()
+    words = lower_case.split()
+    
+    # remove stop words
+    words = [ w for w in words if w not in stopwords_eng ]
+    reviews.append(' '.join(words))
+
+    # output updates
+    if (cur % 1000) == 0:
+      print('Completed processing review {0} of {1}\n'.format(cur, total))
+
+    cur += 1
+  #print(reviews[0])
+  return reviews
+
 '''
-letters_only = re.sub('[^a-zA-Z]', ' ', reviews[0])
-print(letters_only)
+========= MAIN =========
 '''
+if __name__ == '__main__':
+  # 1. READ IN TRAINING DATA
+  #   - header=0 : first line contains column headers
+  #   - quoting=3 : ignore double quotes
+  train = pd.read_csv(data_dir + 'labeledTrainData.tsv', header=0,\
+                      delimiter='\t', quoting=3)
 
-reviews = []
-for r in train['review']:
-  # following BeautifulSoup UserWarning -- specify parser
-  cleaned = BeautifulSoup(r, features='html.parser')
-  # substitute not letters with spaces
-  letters_only = re.sub('[^a-zA-Z]', ' ', cleaned.get_text())
-  lower_case = letters_only.lower()
-  words = lower_case.split()
-  reviews.append(words)
-print(reviews[0])
-
-# 2.3 remove stopwords
-
+  # 2. CLEAN DATA
+  print('Cleaning and parsing the training set movie reviews...\n')
+  reviews = clean_data(train)
+  #print(reviews[0])

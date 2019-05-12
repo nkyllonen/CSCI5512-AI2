@@ -1,6 +1,11 @@
 # Setup
 ```
-$ ./setup.sh # run setup shell script
+$ ./setup.sh                              # run setup shell script
+```
+
+# Run
+```
+$ pipenv run python3 classifier.py
 ```
 
 # Notes
@@ -15,10 +20,9 @@ $ ./setup.sh # run setup shell script
     ```
     - another solution: actually use 18.1
     ```
-    $ pip install --user --upgrade pip # to install latest 18.1
+    $ pip install --user --upgrade pip      # to install latest 18.1
     $ pip install --user git+https://github.com/pypa/pipenv.git
     ```
-- 
 
 ### Tutorial I am following: `Bag of Words Meets Bags of Popcorn` (Kaggle)
 - https://www.kaggle.com/c/word2vec-nlp-tutorial/overview/setting-up-your-system
