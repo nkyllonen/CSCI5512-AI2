@@ -6,10 +6,15 @@ Bags of Popcorn Movie Classifier
 '''
 import pandas as pd
 from bs4 import BeautifulSoup
-import re
+import re, nltk
+
+# NLTK
+nltk.download()
+from nltk.corpus import stopwords
 
 # GLOBALS
 data_dir = 'data/'
+stopwords_eng = stopwords.words('english')
 
 # 1. READ IN TRAINING DATA
 #   - header=0 : first line contains column headers
@@ -41,4 +46,6 @@ for r in train['review']:
   words = lower_case.split()
   reviews.append(words)
 print(reviews[0])
+
+# 2.3 remove stopwords
 

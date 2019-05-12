@@ -1,3 +1,8 @@
+# Setup
+```
+$ ./setup.sh # run setup shell script
+```
+
 # Notes
 ### pipenv problems
 - `pip 18.1 causes 'TypeError: 'module' object is not callable'`

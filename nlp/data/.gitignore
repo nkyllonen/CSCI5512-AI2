@@ -1,3 +1,6 @@
 # ignore uncompressed data files
 *.csv
 *.tsv
+
+# DON'T ignore this .zip file -- override root .gitignore
+!*.zip
