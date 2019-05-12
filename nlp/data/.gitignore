@@ -2,5 +2,7 @@
 *.csv
 *.tsv
 
-# DON'T ignore this .zip file -- override root .gitignore
-!*.zip
+*.tar
+
+# DON'T  file -- override root .gitignore
+!*.tar.lrz
