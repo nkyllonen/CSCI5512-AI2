@@ -6,6 +6,12 @@ name = "pypi"
 [packages]
 pandas = "*"
 numpy = "*"
+scipy = "*"
+scikit-learn = "*"
+"beautifulsoup4" = "*"
+nltk = "*"
+cython = "*"
+gensim = "*"
 
 [dev-packages]
 
