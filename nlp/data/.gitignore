@@ -1,0 +1,3 @@
+# ignore uncompressed data files
+*.csv
+*.tsv
