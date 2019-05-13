@@ -131,7 +131,7 @@ if __name__ == '__main__':
   print_top20(features_bag, vectorizer)
 
   # 4. TRAINING CLASSIFIER
-  print('\nTraining the random forest with {0} trees...'.format(n_trees))
+  print('\nTraining the random forest with {0} trees...\n'.format(n_trees))
   trained_forest = train_forest(features_bag, train_data, n_trees)
 
   # 5. RUN TRAINED FOREST -- do not need to fit model anymore
@@ -152,3 +152,10 @@ if __name__ == '__main__':
   print('\nGenerating output...')
   output = pd.DataFrame(data={'id' : test_data['id'], 'sentiment' : result})
   output.to_csv(output_file, index=False, quoting=3)
+  print('Successfully output to ' + output_file)
+
+  print('\nOutput Analysis:')
+  positives = [ test_data['id'][i] for i in range(len(result)) if (result[i] == 1) ]
+  negatives = [ test_data['id'][i] for i in range(len(result)) if (result[i] == 0) ]
+  total = len(result)
+  print('positives: {0}\nnegatives: {1}\n'.format(len(positives)/total, len(negatives)/total))
