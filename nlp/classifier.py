@@ -54,9 +54,8 @@ def clean_data(raw_data):
 '''
 build_bag: build bag of words using cleaned data
             and N max features
-fit_model(bool) : set to True for training, False for testing
 '''
-def build_bag(data, N, fit_model):
+def build_bag(data, N):
   print('\nCreating the bag of words...')
   
   # init CountVectorizer -- can tokenize and preprocess
@@ -66,12 +65,9 @@ def build_bag(data, N, fit_model):
                                 stop_words=None, \
                                 max_features=N)
   
-  if (fit_model):
-    # fit_transform() --> 1. fits the model and learns vocab
-    #                 --> 2. transform data into feature vectors
-    features = vectorizer.fit_transform(data)
-  else:
-    features = vectorizer.transform(data)
+  # fit_transform() --> 1. fits the model and learns vocab
+  #                 --> 2. transform data into feature vectors
+  features = vectorizer.fit_transform(data)
 
   # convert to Numpy array
   #   --> (# reviews) rows by (N features) cols
@@ -130,7 +126,7 @@ if __name__ == '__main__':
   train_set = clean_data(train_data)
 
   # 3. BUILD BAG OF WORDS
-  (features_bag, vectorizer) = build_bag(train_set, n_features, True)
+  (features_bag, vectorizer) = build_bag(train_set, n_features)
   print('-->shape of generated bag of words: ', features_bag.shape)
   print_top20(features_bag, vectorizer)
 
@@ -139,7 +135,7 @@ if __name__ == '__main__':
   trained_forest = train_forest(features_bag, train_data, n_trees)
 
   # 5. RUN TRAINED FOREST -- do not need to fit model anymore
-  print('*'*20, '\nUSING TRAINED FOREST\n', '*'*20)
+  print('*'*20 + '\nUSING TRAINED FOREST\n' + '*'*20)
   test_data = pd.read_csv(test_file, header=0, \
                           delimiter='\t', quoting=3)
   print('\nShape of test data: ', test_data.shape)
@@ -147,8 +143,8 @@ if __name__ == '__main__':
   print('\nCleaning and parsing the test set...\n')
   test_set = clean_data(test_data)
   
-  (test_features, test_vec) = build_bag(test_set, n_features, False)
-  print_top20(test_features, test_vec)
+  # use previously built and populated CountVectorizer
+  test_features = vectorizer.transform(test_set)
 
   print('\nProcessing test set with trained forest...')
   result = trained_forest.predict(test_features)
