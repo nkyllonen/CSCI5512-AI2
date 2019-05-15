@@ -75,6 +75,7 @@ def build_bag(data, N):
   return (features, vectorizer)
 
 '''
+print_top20: print top 20 most frequent vocab words
 '''
 def print_top20(features, vectorizer):
   # sum up the counts of each vocab word
